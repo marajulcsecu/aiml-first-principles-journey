@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>First-Principles AI/ML Master Roadmap (Stages 0–8)</title>
+  <style>
+    :root {
+      --bg: #09090b;
+      --bg-elevated: #111114;
+      --bg-card: #141418;
+      --bg-subtle: #1c1c22;
+      --bg-code: #0d0d11;
+      --border: #26262e;
+      --border-strong: #383844;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #818cf8;
+      --accent-hover: #6366f1;
+      --accent-ink: #0f0e24;
+      --accent-soft: rgba(129, 140, 248, 0.13);
+      --accent-border: rgba(129, 140, 248, 0.38);
+      --link: #38bdf8;
+      --sky-soft: rgba(56, 189, 248, 0.12);
+      --emerald: #34d399;
+      --emerald-soft: rgba(52, 211, 153, 0.12);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --rose: #f43f5e;
+      --radius: 10px;
+    }
+
+    [data-theme="light"] {
+      --bg: #fafafa;
+      --bg-elevated: #ffffff;
+      --bg-card: #ffffff;
+      --bg-subtle: #f4f4f5;
+      --bg-code: #f4f4f5;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --text: #18181b;
+      --text-muted: #52525b;
+      --text-dim: #71717a;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-ink: #ffffff;
+      --accent-soft: rgba(79, 70, 229, 0.1);
+      --accent-border: rgba(79, 70, 229, 0.35);
+      --link: #0284c7;
+      --sky-soft: rgba(2, 132, 199, 0.1);
+      --emerald: #059669;
+      --emerald-soft: rgba(5, 150, 105, 0.1);
+      --amber: #d97706;
+      --amber-soft: rgba(217, 119, 6, 0.1);
+      --rose: #e11d48;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.62;
+      padding-bottom: 72px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.85em;
+      background: var(--bg-subtle);
+      color: var(--link);
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    /* Slim 52px Sticky Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 52px;
+      background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+
+    .topbar-inner {
+      width: 100%;
+      max-width: 1220px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb .sep { color: var(--text-dim); }
+    .breadcrumb .curr { color: var(--text); }
+
+    .mini-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      max-width: 340px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 720px) { .mini-progress { display: none; } }
+
+    .mini-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .mini-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.25s ease; }
+
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    .top-btn {
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .top-btn:hover { border-color: var(--border-strong); }
+
+    /* Normal-Flow Scrolling Hero */
+    .hero {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 24px 28px;
+    }
+
+    .container { max-width: 1220px; margin: 0 auto; }
+
+    .hero-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.025em; color: var(--text); margin-bottom: 6px; }
+    .subtitle { color: var(--text-muted); font-size: 0.93rem; max-width: 780px; }
+
+    .action-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    button.btn, a.btn {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 13px;
+      border-radius: 7px;
+      font-size: 0.81rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    button.btn:hover, a.btn:hover { background: var(--bg-subtle); border-color: var(--border-strong); }
+
+    .btn-primary {
+      background: var(--accent) !important;
+      color: var(--accent-ink) !important;
+      border-color: var(--accent) !important;
+      font-weight: 700 !important;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover) !important; color: #ffffff !important; }
+    .btn-danger { color: var(--rose) !important; }
+
+    .progress-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 2.2fr;
+      gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      align-items: center;
+    }
+
+    @media (max-width: 860px) { .progress-grid { grid-template-columns: 1fr; } }
+
+    .prog-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .prog-pct { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+    .prog-track { height: 8px; background: var(--bg-subtle); border-radius: 999px; overflow: hidden; }
+    .prog-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.25s ease; }
+
+    .tier-bars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 720px) { .tier-bars { grid-template-columns: repeat(2, 1fr); } }
+
+    .tier-mini {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 0.74rem;
+    }
+
+    .tier-mini-top {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .tier-mini-track { height: 4px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+    .tier-mini-fill { height: 100%; width: 0%; background: var(--link); transition: width 0.25s ease; }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1220px;
+      margin: 26px auto 0;
+      padding: 0 24px;
+    }
+
+    .philosophy-banner {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: var(--radius);
+      padding: 15px 18px;
+      margin-bottom: 20px;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    .philosophy-banner strong { color: var(--text); }
+
+    /* Filter Tabs */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .filter-btn {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+
+    /* Tier Section */
+    .tier-block { margin-bottom: 30px; }
+
+    .tier-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tier-title { font-size: 1.15rem; font-weight: 800; color: var(--text); }
+    .tier-desc { font-size: 0.83rem; color: var(--text-muted); }
+
+    .stages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 500px) { .stages-grid { grid-template-columns: 1fr; } }
+
+    .stage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stage-card.active-stage {
+      border-color: var(--accent-border);
+      border-left: 3px solid var(--accent);
+    }
+
+    .stage-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stage-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .stage-badge.active {
+      color: var(--accent);
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
+    }
+
+    .compute-badge {
+      font-size: 0.71rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .compute-cpu { color: var(--emerald); background: var(--emerald-soft); border-color: rgba(52, 211, 153, 0.3); }
+    .compute-gpu { color: var(--amber); background: var(--amber-soft); border-color: rgba(245, 158, 11, 0.3); }
+
+    .stage-card h3 { font-size: 1.05rem; font-weight: 800; color: var(--text); line-height: 1.3; }
+    .stage-why { font-size: 0.84rem; color: var(--text-muted); }
+
+    .topics-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .topic-pill {
+      font-size: 0.75rem;
+      color: var(--text);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .gates-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 13px;
+    }
+
+    .gates-title {
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .gate-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      cursor: pointer;
+    }
+
+    .gate-item:last-child { margin-bottom: 0; }
+    .gate-item input { margin-top: 3px; accent-color: var(--accent); cursor: pointer; }
+    .gate-item.done { color: var(--text-dim); text-decoration: line-through; }
+
+    .stage-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .stage-footer a { color: var(--link); font-weight: 700; text-decoration: none; }
+    .stage-footer a:hover { text-decoration: underline; }
+
+    /* Specialization Pillars */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .pillar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 13px 15px;
+    }
+
+    .pillar-tag { font-size: 0.72rem; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
+    .pillar-card h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 5px; }
+    .pillar-card p { font-size: 0.79rem; color: var(--text-muted); line-height: 1.5; }
+
+    @media print {
+      .topbar, .action-bar, .filter-bar { display: none !important; }
+      body { background: #ffffff; color: #000000; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar" aria-label="Breadcrumb and Progress">
+    <div class="topbar-inner">
+      <div class="breadcrumb">
+        <a href="./index.html">AI/ML Mastery</a>
+        <span class="sep">/</span>
+        <span class="curr">Master Roadmap (Stages 0–8)</span>
+      </div>
+      <div class="mini-progress">
+        <span id="miniLabel">0 / 0 Gates</span>
+        <div class="mini-track"><div class="mini-fill" id="miniFill"></div></div>
+        <span id="miniPct">0%</span>
+      </div>
+      <div class="top-actions">
+        <a class="top-btn" href="./Stage_0_Numerical_Computing_Bedrock/stage_0_detailed_plan.html">Active: Stage 0</a>
+        <button class="top-btn" id="themeBtn" onclick="toggleTheme()">Light</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero-row">
+        <div>
+          <div class="eyebrow">Timeless First-Principles Curriculum • v1.0</div>
+          <h1>AI/ML Engineer &amp; Researcher Master Roadmap</h1>
+          <p class="subtitle">
+            Strict bottom-up dependency tree from Beginner to Research-Grade Expert (Stages 0 → 8). Future stages remain intentionally high-level and are expanded into full syllabi only when you pass the preceding Mastery Gate.
+          </p>
+        </div>
+        <div class="action-bar">
+          <a class="btn btn-primary" href="./Stage_0_Numerical_Computing_Bedrock/stage_0_detailed_plan.html">Open Active Stage 0 →</a>
+          <button class="btn" onclick="exportProgress()">Export JSON</button>
+          <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importProgress(event)" />
+          <button class="btn" onclick="window.print()">Print / PDF</button>
+          <button class="btn btn-danger" onclick="resetProgress()">Reset</button>
+        </div>
+      </div>
+
+      <div class="progress-grid">
+        <div>
+          <div class="prog-label">
+            <span>Overall Mastery Gates Passed</span>
+            <span class="prog-pct" id="overallPct">0%</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" id="overallFill"></div></div>
+          <div style="font-size:0.76rem; color:var(--text-dim); margin-top:5px;" id="overallCount">0 of 0 gates completed</div>
+        </div>
+        <div class="tier-bars" id="tierBars"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="philosophy-banner">
+      <strong>Just-in-Time Curriculum Rule:</strong> AI/ML evolves rapidly at the frontier, while mathematics, optimization, statistical learning, and systems principles last decades. This roadmap locks the <strong>timeless dependency order</strong> across Stages 0–8, and expands detailed module syllabi &amp; labs <strong>only for the active stage</strong> (currently Stage 0).
+    </div>
+
+    <div class="filter-bar" role="tablist" aria-label="Filter roadmap by tier">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All Tiers (Stages 0–8)</button>
+      <button class="filter-btn" onclick="setFilter('tier1', this)">Tier I: Bedrock (0–1)</button>
+      <button class="filter-btn" onclick="setFilter('tier2', this)">Tier II: Core ML &amp; DL (2–3)</button>
+      <button class="filter-btn" onclick="setFilter('tier3', this)">Tier III: Frontier Paradigms (4–6)</button>
+      <button class="filter-btn" onclick="setFilter('tier4', this)">Tier IV: Systems &amp; Research (7–8)</button>
+    </div>
+
+    <div id="roadmapRoot"></div>
+  </main>
+
+  <script>
+    const THEME_KEY = "marajul_aiml_theme";
+    const STORAGE_KEY = "marajul_aiml_roadmap_v1";
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      document.getElementById("themeBtn").textContent = t === "dark" ? "Light" : "Dark";
+    }
+    function toggleTheme() {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      try { localStorage.setItem(THEME_KEY, next); } catch {}
+      applyTheme(next);
+    }
+    applyTheme((() => { try { return localStorage.getItem(THEME_KEY) || "dark"; } catch { return "dark"; } })());
+
+    const ROADMAP = [
+      {
+        id: "tier1",
+        short: "Tier I",
+        title: "Tier I — Numerical, Mathematical & Statistical Bedrock",
+        desc: "The unbreakable foundation with a 30–50 year half-life. Code-first intuition + geometric proofs on local CPU.",
+        stages: [
+          {
+            id: "stage0",
+            code: "Stage 0 ★ ACTIVE",
+            active: true,
+            compute: "Local CPU",
+            computeClass: "compute-cpu",
+            title: "Scientific Python, Numerical Computing & Experiment Bedrock",
+            why: "Eliminate silent Python aliasing bugs, master vectorized NumPy memory strides, understand IEEE-754 floating-point stability, and enforce leakage-free scientific workflows.",
+            topics: ["Python Internals & Dunders", "NumPy Vectorization & Strides", "IEEE-754 & log-sum-exp", "Pandas & Leakage Hygiene", "Reproducible Testing"],
+            link: "./Stage_0_Numerical_Computing_Bedrock/stage_0_detailed_plan.html",
+            linkLabel: "Open Detailed Stage 0 Syllabus →",
+            gates: [
+              { id: "s0_g1", text: "Pass Lab 0A–0E without AI autopilot (object model, vectorized NumPy, numerical stability, leakage-safe split)." },
+              { id: "s0_g2", text: "Build a zero-dependency vectorized numerically-stable Softmax + Cross-Entropy utility verified against edge cases (1e6 logits, -1e6 logits)." },
+              { id: "s0_g3", text: "Feynman check: explain Python aliasing, NumPy strides/views vs copies, and FP32/BF16 numerical overflow from memory." }
+            ]
+          },
+          {
+            id: "stage1",
+            code: "Stage 1 • Next",
+            active: false,
+            compute: "Local CPU",
+            computeClass: "compute-cpu",
+            title: "Code-First Applied Mathematics for ML (Geometric + Physics Lens)",
+            why: "Rebuild Linear Algebra, Matrix Calculus, Probability/Information Theory, and Optimization not for university exams—but as geometric and computational engines implemented in pure NumPy.",
+            topics: ["Linear Algebra & SVD/PCA", "Matrix Calculus & Jacobians/VJPs", "Probability, Bayes, MLE vs MAP", "Entropy, KL & Jensen/ELBO", "Convexity & Gradient Descent"],
+            link: null,
+            linkLabel: "Expands in detail after Mastery Gate 0",
+            gates: [
+              { id: "s1_g1", text: "Implement PCA via SVD, numerical Jacobian finite-difference gradcheck, and MLE vs MAP estimators from scratch in pure NumPy." },
+              { id: "s1_g2", text: "Derive on paper and verify in code why L2 regularization equals a Gaussian prior and Cross-Entropy minimization equals KL-divergence minimization." },
+              { id: "s1_g3", text: "Visualize conditioning & momentum dynamics (physics damped-oscillator analogy) on ill-conditioned quadratic bowls." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "tier2",
+        short: "Tier II",
+        title: "Tier II — Classical Machine Learning & Deep Learning Core",
+        desc: "Build algorithms and autograd engines from scratch before touching high-level libraries so nothing is ever a black box.",
+        stages: [
+          {
+            id: "stage2",
+            code: "Stage 2",
+            active: false,
+            compute: "Local CPU",
+            computeClass: "compute-cpu",
+            title: "Classical Machine Learning & Statistical Learning Theory",
+            why: "Master tabular ML, bias–variance decomposition, rigorous cross-validation, calibration, and ensembles—where classical models still dominate many real-world problems.",
+            topics: ["Linear/Logistic Regression", "Decision Trees & GBDT (XGBoost/LightGBM)", "SVMs & Kernels", "k-Means, GMM/EM & UMAP", "Bias-Variance, CV & Metrics"],
+            link: null,
+            linkLabel: "Expands after Mastery Gate 1",
+            gates: [
+              { id: "s2_g1", text: "Implement Linear Regression, Logistic Regression, Decision Tree (Gini/Entropy), k-Means, and GMM (EM) in pure NumPy." },
+              { id: "s2_g2", text: "Run a leakage-free tabular benchmark comparing baselines vs GBDT with proper stratified CV, calibration curves, and error analysis." },
+              { id: "s2_g3", text: "Feynman check: diagnose underfitting vs overfitting, ROC-AUC vs PR-AUC on imbalanced data, and feature leakage." }
+            ]
+          },
+          {
+            id: "stage3",
+            code: "Stage 3",
+            active: false,
+            compute: "Local CPU / Free GPU",
+            computeClass: "compute-cpu",
+            title: "Deep Learning Internals (The Engine Room)",
+            why: "Build your own Autograd engine and vectorized neural network from scratch, master PyTorch internals, and develop sharp neural-net debugging intuition.",
+            topics: ["Micrograd-Style Scalar Autograd", "Pure NumPy Backprop MLP", "PyTorch Internals & Custom Autograd", "Init, LayerNorm/RMSNorm, AdamW", "CNNs, ResNets & RNN/LSTM"],
+            link: null,
+            linkLabel: "Expands after Mastery Gate 2",
+            gates: [
+              { id: "s3_g1", text: "Build a working scalar Autograd engine from scratch and verify every backward gradient against PyTorch to <1e-6 error." },
+              { id: "s3_g2", text: "Diagnose and repair 4 intentionally broken neural nets (dead ReLUs, vanishing/exploding gradients, bad init, broken BatchNorm/LayerNorm)." },
+              { id: "s3_g3", text: "Train a clean CNN (ResNet-style) and sequence model in PyTorch with reproducible logging, LR schedules, and ablation notes." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "tier3",
+        short: "Tier III",
+        title: "Tier III — Modern Frontier Paradigms (Full Breadth with Depth)",
+        desc: "Cover all core modern AI paradigms—Language/Foundation Models, Vision/Generative/Multimodal, and Reinforcement Learning—with hands-on Cloud GPU builds.",
+        stages: [
+          {
+            id: "stage4",
+            code: "Stage 4",
+            active: false,
+            compute: "Cloud GPU",
+            computeClass: "compute-gpu",
+            title: "Transformers, NLP & Foundation Models (LLMs)",
+            why: "Go far beyond API prompts: build BPE tokenizers, RoPE/GQA/KV-Cache attention, a decoder-only Transformer from scratch, post-training (SFT/DPO), and rigorous evals.",
+            topics: ["BPE Tokenization", "Attention, MHA/GQA, RoPE, KV-Cache", "GPT Built from Scratch", "Scaling Laws & Pretraining", "SFT, DPO/RLHF & Evals", "First-Principles Agent/RAG"],
+            link: null,
+            linkLabel: "Expands just-in-time after Stage 3",
+            gates: [
+              { id: "s4_g1", text: "Implement a BPE tokenizer and a decoder-only Transformer with RoPE & KV-Cache from scratch in PyTorch and train a compact model." },
+              { id: "s4_g2", text: "Run a controlled post-training experiment (SFT + preference alignment like DPO) and measure quantitative eval shifts & failure modes." },
+              { id: "s4_g3", text: "Explain attention complexity O(N^2), KV-cache memory math, and Chinchilla compute-optimal scaling from memory." }
+            ]
+          },
+          {
+            id: "stage5",
+            code: "Stage 5",
+            active: false,
+            compute: "Cloud GPU",
+            computeClass: "compute-gpu",
+            title: "Computer Vision, Generative Models & Multimodal AI",
+            why: "Master modern representation learning and generative physics—connecting your Physics/ODE/SDE intuition directly to Diffusion, Flow Matching, and Vision-Language architectures.",
+            topics: ["Vision Transformers (ViT)", "Self-Supervised (CLIP, MAE, DINO)", "VAEs & ELBO", "Diffusion & Flow Matching (SDE/ODE)", "Multimodal Vision-Language"],
+            link: null,
+            linkLabel: "Expands just-in-time after Stage 4",
+            gates: [
+              { id: "s5_g1", text: "Implement a minimal Diffusion / Flow Matching generative model from scratch in PyTorch and sample coherent outputs." },
+              { id: "s5_g2", text: "Build a contrastive dual-encoder (CLIP-style) alignment experiment and analyze embedding geometry / zero-shot retrieval." },
+              { id: "s5_g3", text: "Derive the VAE ELBO and explain score matching / flow matching ODE trajectories intuitively." }
+            ]
+          },
+          {
+            id: "stage6",
+            code: "Stage 6",
+            active: false,
+            compute: "CPU + Cloud GPU",
+            computeClass: "compute-gpu",
+            title: "Reinforcement Learning & Decision Making",
+            why: "Understand sequential decision-making, control, planning (massive synergy with Game Dev / Unity simulations), and modern RL for LLM reasoning.",
+            topics: ["MDPs & Bellman Equations", "TD Learning & Q-Learning", "DQN, Policy Gradients & PPO", "World Models & MCTS", "RL for Reasoning (GRPO / RLVR)"],
+            link: null,
+            linkLabel: "Expands just-in-time after Stage 5",
+            gates: [
+              { id: "s6_g1", text: "Implement Tabular Q-Learning, REINFORCE with baseline, and clipped PPO from scratch and diagnose variance/collapse failure modes." },
+              { id: "s6_g2", text: "Build an MCTS planning agent or RL agent inside a custom simulation environment with seed-averaged learning curves." },
+              { id: "s6_g3", text: "Explain on-policy vs off-policy tradeoffs, GAE advantage estimation, and verifiable-reward RL for reasoning models." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "tier4",
+        short: "Tier IV",
+        title: "Tier IV — ML Systems Engineering & Independent Research Craft",
+        desc: "Bridge hardware-level performance engineering (C/C++/GPU synergy) with genuine scientific research ability (paper reproduction, ablations, novel contributions).",
+        stages: [
+          {
+            id: "stage7",
+            code: "Stage 7",
+            active: false,
+            compute: "Cloud GPU",
+            computeClass: "compute-gpu",
+            title: "ML Systems, GPU Computing & Production Engineering",
+            why: "Turn models into fast, reliable, cost-efficient systems—leveraging your C/C++ and low-level architecture roots to understand the GPU memory wall, kernels, quantization, and distributed training.",
+            topics: ["GPU SRAM vs HBM & Memory Wall", "FlashAttention & Triton/CUDA Basics", "DDP, FSDP & Parallelism", "Quantization (INT8/INT4/FP8)", "Serving, Latency & Drift Monitoring"],
+            link: null,
+            linkLabel: "Expands just-in-time after Stage 6",
+            gates: [
+              { id: "s7_g1", text: "Profile a real training/inference bottleneck (compute-bound vs memory-bandwidth-bound) and write a custom fused kernel (Triton or CUDA)." },
+              { id: "s7_g2", text: "Quantize and benchmark a model's throughput, memory footprint, and accuracy degradation cleanly with reproducible evals." },
+              { id: "s7_g3", text: "Explain roofline analysis, FlashAttention tiling, and DDP vs FSDP memory sharding from memory." }
+            ]
+          },
+          {
+            id: "stage8",
+            code: "Stage 8 • Lifetime",
+            active: false,
+            compute: "Cloud GPU",
+            computeClass: "compute-gpu",
+            title: "AI Research Craft & Specialization Pillars (1 Pillar at a Time)",
+            why: "Transition from learner/engineer to independent researcher: dissect papers critically, reproduce published results faithfully, design clean ablations, and push a chosen frontier.",
+            topics: ["Critical Paper Dissection", "3+ Full Paper Reproductions", "Controlled Ablation Design", "Negative-Result Analysis", "Technical Writing & Open Source"],
+            link: null,
+            linkLabel: "Organic lifetime research mastery",
+            gates: [
+              { id: "s8_g1", text: "Faithfully reproduce 3 landmark or recent arXiv papers from scratch (code + metrics + honest discrepancy report)." },
+              { id: "s8_g2", text: "Design and execute an original hypothesis-driven ablation study with statistical error bars and a clean LaTeX/technical report." },
+              { id: "s8_g3", text: "Select your first deep Research Pillar (A–E below) and publish a meaningful open-source artifact or research paper." }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const PILLARS = [
+      { tag: "Pillar A", title: "Frontier Foundation Models & Reasoning", desc: "Pretraining dynamics, long-horizon reasoning, post-training RL, test-time compute scaling, and evaluation science." },
+      { tag: "Pillar B • Cyber Synergy", title: "AI Safety, Adversarial ML & Mechanistic Interpretability", desc: "Reverse-engineering neural circuits, adversarial robustness, red-teaming agents, backdoor/poisoning defense, and alignment." },
+      { tag: "Pillar C • C/C++ Synergy", title: "ML Systems, Compilers & GPU Kernels", desc: "Custom Triton/CUDA kernels, MLIR/graph compilers, distributed training infrastructure, ultra-low-bit quantization & inference engines." },
+      { tag: "Pillar D • Game Dev Synergy", title: "Multimodal, Generative & Embodied / World Models", desc: "Interactive world models, physics-aware video/3D generation, robotics/simulation agents, and Unity/real-time AI environments." },
+      { tag: "Pillar E • Physics Synergy", title: "Learning Theory, Causality & AI for Science", desc: "Statistical physics of deep learning, scaling theory, causal inference, scientific ML (PINNs, neural operators, PDE solvers)." }
+    ];
+
+    let activeFilter = "all";
+    let state = loadState();
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; }
+    }
+    function saveState() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+    }
+
+    function setFilter(tierId, btn) {
+      activeFilter = tierId;
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      render();
+    }
+
+    function toggleGate(gateId) {
+      state[gateId] = !state[gateId];
+      saveState();
+      render();
+    }
+
+    function computeStats() {
+      let total = 0, done = 0;
+      const tierStats = {};
+      ROADMAP.forEach(tier => {
+        let tTotal = 0, tDone = 0;
+        tier.stages.forEach(st => {
+          st.gates.forEach(g => {
+            total++; tTotal++;
+            if (state[g.id]) { done++; tDone++; }
+          });
+        });
+        tierStats[tier.id] = { short: tier.short, total: tTotal, done: tDone };
+      });
+      return { total, done, tierStats };
+    }
+
+    function updateProgressUI() {
+      const { total, done, tierStats } = computeStats();
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      document.getElementById("overallPct").textContent = pct + "%";
+      document.getElementById("overallFill").style.width = pct + "%";
+      document.getElementById("overallCount").textContent = `${done} of ${total} mastery gates completed`;
+      document.getElementById("miniLabel").textContent = `${done} / ${total} Gates`;
+      document.getElementById("miniFill").style.width = pct + "%";
+      document.getElementById("miniPct").textContent = pct + "%";
+
+      const tb = document.getElementById("tierBars");
+      tb.innerHTML = Object.values(tierStats).map(t => {
+        const tp = t.total ? Math.round((t.done / t.total) * 100) : 0;
+        return `<div class="tier-mini">
+          <div class="tier-mini-top"><span>${escapeHtml(t.short)}</span><span>${t.done}/${t.total}</span></div>
+          <div class="tier-mini-track"><div class="tier-mini-fill" style="width:${tp}%"></div></div>
+        </div>`;
+      }).join("");
+    }
+
+    function render() {
+      const root = document.getElementById("roadmapRoot");
+      const visibleTiers = activeFilter === "all" ? ROADMAP : ROADMAP.filter(t => t.id === activeFilter);
+
+      root.innerHTML = visibleTiers.map(tier => {
+        const stagesHtml = tier.stages.map(st => {
+          const gatesDone = st.gates.filter(g => state[g.id]).length;
+          const gatesHtml = st.gates.map(g => {
+            const checked = !!state[g.id];
+            return `<label class="gate-item ${checked ? 'done' : ''}">
+              <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleGate('${escapeHtml(g.id)}')" />
+              <span>${escapeHtml(g.text)}</span>
+            </label>`;
+          }).join("");
+
+          const footerLink = st.link
+            ? `<a href="${escapeHtml(st.link)}">${escapeHtml(st.linkLabel)}</a>`
+            : `<span>${escapeHtml(st.linkLabel)}</span>`;
+
+          return `<article class="stage-card ${st.active ? 'active-stage' : ''}">
+            <div class="stage-top">
+              <span class="stage-badge ${st.active ? 'active' : ''}">${escapeHtml(st.code)}</span>
+              <span class="compute-badge ${escapeHtml(st.computeClass)}">${escapeHtml(st.compute)}</span>
+            </div>
+            <h3>${escapeHtml(st.title)}</h3>
+            <p class="stage-why">${escapeHtml(st.why)}</p>
+            <div class="topics-wrap">
+              ${st.topics.map(t => `<span class="topic-pill">${escapeHtml(t)}</span>`).join("")}
+            </div>
+            <div class="gates-box">
+              <div class="gates-title">Mastery Gates (${gatesDone}/${st.gates.length})</div>
+              ${gatesHtml}
+            </div>
+            <div class="stage-footer">
+              <span>Status: ${gatesDone === st.gates.length ? 'Mastered ✓' : (st.active ? 'In Progress' : 'Queued')}</span>
+              ${footerLink}
+            </div>
+          </article>`;
+        }).join("");
+
+        const pillarsSection = tier.id === "tier4" ? `
+          <div style="margin-top:20px;">
+            <h3 style="font-size:0.95rem; font-weight:800; color:var(--text); margin-bottom:4px;">Stage 8 Lifetime Research Specialization Pillars (Pick 1 at a Time)</h3>
+            <p style="font-size:0.82rem; color:var(--text-muted);">Choose organically after Stages 0–7 based on what excites you most—notice the unique bridges to your Cybersecurity, C/C++, Game Dev, and Physics strengths.</p>
+            <div class="pillars-grid">
+              ${PILLARS.map(p => `<div class="pillar-card">
+                <div class="pillar-tag">${escapeHtml(p.tag)}</div>
+                <h4>${escapeHtml(p.title)}</h4>
+                <p>${escapeHtml(p.desc)}</p>
+              </div>`).join("")}
+            </div>
+          </div>` : "";
+
+        return `<section class="tier-block">
+          <div class="tier-header">
+            <h2 class="tier-title">${escapeHtml(tier.title)}</h2>
+            <span class="tier-desc">${escapeHtml(tier.desc)}</span>
+          </div>
+          <div class="stages-grid">${stagesHtml}</div>
+          ${pillarsSection}
+        </section>`;
+      }).join("");
+
+      updateProgressUI();
+    }
+
+    function exportProgress() {
+      const payload = { version: "aiml_roadmap_v1", exportedAt: new Date().toISOString(), state };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "aiml_master_roadmap_progress.json";
+      a.click();
+    }
+
+    function importProgress(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const parsed = JSON.parse(ev.target.result);
+          if (parsed && typeof parsed.state === "object") {
+            state = parsed.state;
+            saveState();
+            render();
+            alert("Progress imported successfully!");
+          } else {
+            alert("Invalid backup JSON format.");
+          }
+        } catch {
+          alert("Could not parse JSON file.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    }
+
+    function resetProgress() {
+      if (!confirm("Reset all Master Roadmap Mastery Gate checkboxes?")) return;
+      state = {};
+      saveState();
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>মডিউল ০.১ (গভীর আলোচনা): AI/ML ইঞ্জিনিয়ারদের জন্য Python ফাউন্ডেশন ও ইন্টারনালস</title>
+  <style>
+    :root {
+      --bg: #09090b;
+      --bg-elevated: #111114;
+      --bg-card: #141418;
+      --bg-subtle: #1c1c22;
+      --bg-code: #0d0d11;
+      --border: #26262e;
+      --border-strong: #383844;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #818cf8;
+      --accent-hover: #6366f1;
+      --accent-ink: #0f0e24;
+      --accent-soft: rgba(129, 140, 248, 0.13);
+      --accent-border: rgba(129, 140, 248, 0.38);
+      --link: #38bdf8;
+      --sky-soft: rgba(56, 189, 248, 0.12);
+      --emerald: #34d399;
+      --emerald-soft: rgba(52, 211, 153, 0.12);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --rose: #f43f5e;
+      --rose-soft: rgba(244, 63, 94, 0.14);
+      --radius: 10px;
+    }
+
+    [data-theme="light"] {
+      --bg: #fafafa;
+      --bg-elevated: #ffffff;
+      --bg-card: #ffffff;
+      --bg-subtle: #f4f4f5;
+      --bg-code: #111114;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --text: #18181b;
+      --text-muted: #52525b;
+      --text-dim: #71717a;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-ink: #ffffff;
+      --accent-soft: rgba(79, 70, 229, 0.1);
+      --accent-border: rgba(79, 70, 229, 0.35);
+      --link: #0284c7;
+      --sky-soft: rgba(2, 132, 199, 0.1);
+      --emerald: #059669;
+      --emerald-soft: rgba(5, 150, 105, 0.1);
+      --amber: #d97706;
+      --amber-soft: rgba(217, 119, 6, 0.1);
+      --rose: #e11d48;
+      --rose-soft: rgba(225, 29, 72, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans Bengali', 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.78;
+      padding-bottom: 72px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.86em;
+      background: var(--bg-subtle);
+      color: var(--link);
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+
+    pre {
+      background: #0d0d11;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.83rem;
+      line-height: 1.58;
+      color: #e4e4e7;
+      margin: 12px 0;
+    }
+
+    pre .kw { color: #c084fc; }
+    pre .ty { color: #38bdf8; }
+    pre .fn { color: #34d399; }
+    pre .cm { color: #9ca3af; }
+    pre .nu { color: #fbbf24; }
+    pre .st { color: #a5f3fc; }
+    pre .bad { color: #fb7185; font-weight: 700; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 52px;
+      background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+
+    .topbar-inner {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .breadcrumb a { color: var(--text-muted); }
+    .breadcrumb a:hover { color: var(--text); text-decoration: none; }
+    .breadcrumb .sep { color: var(--text-dim); }
+
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    .top-btn {
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .top-btn:hover { border-color: var(--border-strong); text-decoration: none; }
+
+    .lang-btn {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent-border);
+      font-weight: 700;
+    }
+
+    .hero {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 24px 26px;
+    }
+
+    .container { max-width: 1140px; margin: 0 auto; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+
+    .pill {
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+    }
+
+    .pill-accent { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .subtitle { color: var(--text-muted); font-size: 0.96rem; max-width: 850px; }
+
+    .layout {
+      max-width: 1140px;
+      margin: 28px auto 0;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 245px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static !important; }
+    }
+
+    .toc {
+      position: sticky;
+      top: 68px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 15px;
+    }
+
+    .toc h2 {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+
+    .toc ul { list-style: none; }
+    .toc li { margin-bottom: 5px; }
+    .toc a {
+      display: block;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .toc a:hover { background: var(--bg-subtle); color: var(--text); text-decoration: none; }
+
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 26px;
+      margin-bottom: 22px;
+    }
+
+    .sec-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .section-card h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .section-card h3 {
+      font-size: 1.03rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 18px 0 8px;
+    }
+
+    .section-card p { font-size: 0.94rem; color: var(--text-muted); margin-bottom: 12px; }
+    .section-card ul, .section-card ol { padding-left: 20px; margin-bottom: 12px; }
+    .section-card li { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 6px; }
+    .section-card strong { color: var(--text); }
+
+    .callout {
+      border-radius: 8px;
+      padding: 13px 16px;
+      margin: 14px 0;
+      font-size: 0.89rem;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+    }
+
+    .callout-accent { border-left: 3px solid var(--accent); background: var(--accent-soft); }
+    .callout-warn { border-left: 3px solid var(--amber); background: var(--amber-soft); }
+
+    .diagram-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 16px;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .diagram-caption {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 0.86rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: var(--bg-subtle); color: var(--text); font-weight: 700; }
+    td { color: var(--text-muted); }
+
+    .sim-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--accent-border);
+      border-radius: 9px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .sim-field { display: flex; flex-direction: column; gap: 4px; }
+    .sim-field label { font-size: 0.76rem; font-weight: 700; color: var(--text-dim); }
+
+    .sim-field select, .sim-field input {
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-family: inherit;
+    }
+
+    .sim-btn {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sim-btn:hover { background: var(--accent-hover); color: #ffffff; }
+
+    .sim-output {
+      background: #0d0d11;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 13px 15px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.81rem;
+      color: #e4e4e7;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    .sim-alert {
+      margin-top: 10px;
+      padding: 10px 13px;
+      border-radius: 7px;
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+
+    .alert-bad { background: var(--rose-soft); color: var(--rose); border: 1px solid rgba(244, 63, 94, 0.35); }
+    .alert-ok { background: var(--emerald-soft); color: var(--emerald); border: 1px solid rgba(52, 211, 153, 0.35); }
+
+    .quiz-item {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 15px 17px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-q { font-size: 0.92rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 7px; }
+
+    .quiz-btn {
+      text-align: left;
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .quiz-btn:hover { border-color: var(--border-strong); }
+    .quiz-btn.correct { background: var(--emerald-soft); border-color: var(--emerald); color: var(--emerald); font-weight: 700; }
+    .quiz-btn.wrong { background: var(--rose-soft); border-color: var(--rose); color: var(--rose); }
+
+    .quiz-feedback { display: none; margin-top: 9px; font-size: 0.85rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar" aria-label="লেকচার নেভিগেশন">
+    <div class="topbar-inner">
+      <div class="breadcrumb">
+        <a href="../../index.html">AI/ML Mastery</a>
+        <span class="sep">/</span>
+        <a href="../stage_0_detailed_plan.html">Stage 0</a>
+        <span class="sep">/</span>
+        <span>মডিউল ০.১ (বাংলা)</span>
+      </div>
+      <div class="top-actions">
+        <a class="top-btn lang-btn" href="./module0_1_python_for_ml_engineers.html">English Version →</a>
+        <button class="top-btn" id="themeBtn" onclick="toggleTheme()">Light</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="badge-row">
+        <span class="pill pill-accent">টিয়ার ১ • স্টেজ ০ • মডিউল ০.১</span>
+        <span class="pill">ধাপ ১: ভিজ্যুয়াল HTML লেকচার</span>
+        <span class="pill">C/C++ → Python পূর্ণাঙ্গ ও গভীর রিভিশন</span>
+      </div>
+      <h1>AI/ML ইঞ্জিনিয়ারদের জন্য Python ফাউন্ডেশন ও ইন্টারনালস</h1>
+      <p class="subtitle">
+        যারা আগে থেকেই <code>C/C++/Java</code> জানো, তাদের জন্য কোনো কিছু স্কিপ না করে <code>Python</code>-এর সম্পূর্ণ ও গভীর রিভিশন: CPython-এর হিপ অবজেক্ট মডেল, Reference Aliasing-এর নীরব ফাঁদ, ডেটা স্ট্রাকচারের কমপ্লেক্সিটি, Generators, Closures এবং <code>PyTorch</code> ও <code>Autograd</code>-এর মূল ইঞ্জিন Dunder Methods।
+      </p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="toc" aria-label="সূচিপত্র">
+      <h2>এই লেকচারের সূচিপত্র</h2>
+      <ul>
+        <li><a href="#sec-1">১. কেন Python + CPython ইন্টারনালস</a></li>
+        <li><a href="#sec-2">২. মূল সিনট্যাক্স (C/C++ → Python)</a></li>
+        <li><a href="#sec-3">৩. অবজেক্ট মডেল ও Aliasing সিমুলেটর</a></li>
+        <li><a href="#sec-4">৪. ডেটা স্ট্রাকচার ও Slicing</a></li>
+        <li><a href="#sec-5">৫. ফাংশন, ডিফল্ট ফাঁদ ও Closures</a></li>
+        <li><a href="#sec-6">৬. Generators ও Context Managers</a></li>
+        <li><a href="#sec-7">৭. OOP ও PyTorch Dunder ইঞ্জিন</a></li>
+        <li><a href="#sec-8">৮. ইন্টারেক্টিভ ৬-প্রশ্নের কুইজ</a></li>
+        <li><a href="#sec-lab">৯. ল্যাব ০এ শুরু করো (Pure Python)</a></li>
+      </ul>
+    </aside>
+
+    <main>
+      <!-- SECTION 1 -->
+      <section class="section-card" id="sec-1">
+        <div class="sec-eyebrow">অধ্যায় ০.১.১ • আর্কিটেকচার প্রথম</div>
+        <h2>১. AI/ML-এ কেন Python রাজত্ব করে—এবং এর নিচে কীভাবে C/C++ কাজ করে</h2>
+        <p>
+          <code>C</code>, <code>C++</code> বা <code>Java</code> ব্যাকগ্রাউন্ড থেকে এসে তোমার প্রথম যৌক্তিক ইঞ্জিনিয়ারিং প্রশ্ন হওয়া উচিত: <em>"যদি সাধারণ লুপে Python, C++-এর তুলনায় ৩০ থেকে ১০০ গুণ ধীরগতির হয়, তাহলে বিশ্বের প্রায় সব ফ্রন্টিয়ার AI/ML রিসার্চ কেন Python-এ চলে?"</em>
+        </p>
+        <p>
+          উত্তর হলো <strong>Two-Language Architecture</strong>: AI/ML-এ ভারী ম্যাট্রিক্স গণনা আসলে <code>Python</code> করে না। Python কাজ করে একটি অত্যন্ত পরিষ্কার <strong>Orchestration ও Control Plane</strong> হিসেবে, যা নিচ থেকে কম্পাইল করা <code>C</code>, <code>C++</code>, <code>CUDA</code> এবং <code>Triton</code> কার্নেলকে কল করে (যেমন <code>NumPy</code>, <code>PyTorch</code>, <code>JAX</code>)।
+        </p>
+        <div class="callout callout-accent">
+          <strong>তোমার C/C++ নলেজ এখানে কেন বিরাট সুবিধা:</strong> C-তে <code>int32_t x = 42;</code> লিখলে স্ট্যাকে সরাসরি ৪ বাইট ডেটা বসে। কিন্তু CPython-এ <code>x = 42</code> লিখলে প্রতিটি সামান্য ইন্টিজারও হিপে একটি সম্পূর্ণ C স্ট্রাক্ট (<code>PyObject</code>) হিসেবে তৈরি হয়—যাতে রেফারেন্স কাউন্ট, টাইপ পয়েন্টার ও মেটাডেটা থাকে (ন্যূনতম ~২৮ বাইট!)।
+        </div>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 760 225" width="100%" role="img" aria-label="C stack integer বনাম CPython heap PyObject মেমরি লেআউট">
+            <rect x="10" y="12" width="290" height="200" rx="8" fill="#141418" stroke="#383844"/>
+            <text x="26" y="36" fill="#34d399" font-size="13" font-weight="700" font-family="monospace">C / C++: int32_t x = 42;</text>
+            <text x="26" y="56" fill="#a1a1aa" font-size="11">স্ট্যাক ফ্রেমে সরাসরি ৪ বাইট (কোনো পয়েন্টার জাম্প নেই)</text>
+            <rect x="28" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <rect x="88" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <rect x="148" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <rect x="208" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <text x="58" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x2A</text>
+            <text x="118" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x00</text>
+            <text x="178" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x00</text>
+            <text x="238" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x00</text>
+            <text x="26" y="148" fill="#a1a1aa" font-size="11" font-family="monospace">Size: 4 bytes | 1 CPU cycle</text>
+            <text x="26" y="168" fill="#34d399" font-size="11">১০ লাখ int অ্যারে = মাত্র ৪ MB পাশাপাশি RAM</text>
+            <text x="26" y="188" fill="#71717a" font-size="11">(NumPy ও PyTorch-এর ভেতরে ঠিক এই লেআউটই থাকে!)</text>
+
+            <rect x="330" y="12" width="420" height="200" rx="8" fill="#141418" stroke="#818cf8"/>
+            <text x="346" y="36" fill="#818cf8" font-size="13" font-weight="700" font-family="monospace">CPython: x = 42  (Name → Heap PyLongObject)</text>
+            <rect x="346" y="64" width="108" height="48" rx="6" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="400" y="84" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="700" font-family="monospace">Name: "x"</text>
+            <text x="400" y="101" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="monospace">PyObject* ptr</text>
+            <line x1="454" y1="88" x2="496" y2="88" stroke="#818cf8" stroke-width="2"/>
+            <polygon points="496,83 506,88 496,93" fill="#818cf8"/>
+            <rect x="508" y="54" width="224" height="106" rx="6" fill="#1c1c22" stroke="#818cf8"/>
+            <text x="520" y="75" fill="#fbbf24" font-size="11" font-family="monospace">ob_refcnt : 8 bytes (GC count)</text>
+            <text x="520" y="96" fill="#38bdf8" font-size="11" font-family="monospace">ob_type   : 8 bytes (&amp;PyLong_Type)</text>
+            <text x="520" y="117" fill="#c084fc" font-size="11" font-family="monospace">lv_tag    : 8 bytes (sign/size)</text>
+            <text x="520" y="138" fill="#34d399" font-size="11" font-family="monospace">ob_digit  : 4 bytes (value = 42)</text>
+            <text x="346" y="182" fill="#f59e0b" font-size="11" font-family="monospace">Size: ~28 bytes + pointer indirection + dynamic dispatch</text>
+            <text x="346" y="199" fill="#a1a1aa" font-size="11">১০ লাখ Python int লিস্ট = হিপে ছড়ানো পয়েন্টার (~৩৬ MB!)</text>
+          </svg>
+          <div class="diagram-caption">চিত্র ১: কেন সাধারণ Python লুপ স্লো হয় এবং মডিউল ০.২-এ NumPy-এর C-বাফার কেন ১০০ গুণ স্পিড দেয়।</div>
+        </div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section class="section-card" id="sec-2">
+        <div class="sec-eyebrow">অধ্যায় ০.১.২ • জিরো-স্কিপ মূল রিভিশন</div>
+        <h2>২. মূল Python সিনট্যাক্স ও সূক্ষ্ম আচরণগত পার্থক্য (C/C++ → Python)</h2>
+        <p>
+          তুমি আগে থেকেই C/C++/Java থেকে লুপ, কন্ডিশন আর ফাংশন জানো। তাই অযথা <code>if</code> কী তা নিয়ে পাতার পর পাতা নষ্ট না করে, সরাসরি দেখে নিই <strong>কোথায় C/C++-এর অভ্যাস Python-এ নীরব বাগ তৈরি করতে পারে</strong>।
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>বিষয়</th>
+              <th>C / C++ আচরণ</th>
+              <th>Python 3 আচরণ (মন দিয়ে দেখো!)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ভাগ <code>/</code> বনাম <code>//</code></strong></td>
+              <td><code>5 / 2 == 2</code> (শূন্যের দিকে কাটে: <code>-5 / 2 == -2</code>)</td>
+              <td><code>5 / 2 == 2.5</code> (সবসময় <code>float</code>!)। ফ্লোর ডিভিশন <code>//</code> <strong>−∞-এর দিকে</strong> নিচে নামে: <code>-5 // 2 == -3</code>!</td>
+            </tr>
+            <tr>
+              <td><strong>ঋণাত্মক সংখ্যার <code>%</code></strong></td>
+              <td><code>-5 % 2 == -1</code> (ভাজ্যের চিহ্ন রাখে)</td>
+              <td><code>-5 % 2 == 1</code> (ভাজকের চিহ্ন রাখে এবং সবসময় <code>a == (a // b)*b + (a % b)</code> মানে)।</td>
+            </tr>
+            <tr>
+              <td><strong>অসীম প্রিসিশন <code>int</code></strong></td>
+              <td><code>int64_t</code> ওভারফ্লো করে (signed C-তে UB!)</td>
+              <td>Python-এর <code>int</code>-এর কোনো সীমা নেই (কিন্তু <code>NumPy</code> ফিক্সড-বিট int-এ ওভারফ্লো হয়!)।</td>
+            </tr>
+            <tr>
+              <td><strong><code>is</code> বনাম <code>==</code></strong></td>
+              <td><code>==</code> ভ্যালু বা পয়েন্টার ঠিকানা তুলনা করে</td>
+              <td><code>==</code> <em>মান</em> তুলনা করে (<code>__eq__</code>)। <code>is</code> <em>মেমরি ঠিকানা</em> (<code>id(a) == id(b)</code>) তুলনা করে। সবসময় <code>x is None</code> লিখবে—কখনোই সংখ্যা বা স্ট্রিংয়ের জন্য <code>is</code> নয়!</td>
+            </tr>
+            <tr>
+              <td><strong>Truthiness</strong></td>
+              <td><code>0</code> বা <code>NULL</code> মিথ্যা, বাকি সব সত্য</td>
+              <td><code>False, None, 0, 0.0, "", [], (), {}, set()</code> falsy। <em>সতর্কতা:</em> <code>0.0</code> যদি বৈধ ফিচার বা লার্নিং রেট হয়, তবে <code>if x:</code> নয়—সবসময় <code>if x is not None:</code> লিখবে!</td>
+            </tr>
+            <tr>
+              <td><strong>ব্লক ও স্কোপ</strong></td>
+              <td><code>{ ... }</code> আলাদা ব্লক স্কোপ বানায়</td>
+              <td>৪-স্পেস ইন্ডেন্টেশন। <code>if</code> বা <code>for</code>-এর আলাদা ব্লক স্কোপ নেই—স্কোপ কেবল Function, Class এবং Module লেভেলে (LEGB নিয়ম)। লুপের পর লুপ ভেরিয়েবল টিকে থাকে।</td>
+            </tr>
+            <tr>
+              <td><strong>Unpacking ও লুপ</strong></td>
+              <td>ম্যানুয়াল ইনডেক্স লুপ <code>for (int i=0; i&lt;n; ++i)</code></td>
+              <td>সবসময় <code>enumerate(xs)</code> এবং <code>zip(X, Y, strict=True)</code> ব্যবহার করো। স্টার আনপ্যাকিং: <code>first, *middle, last = seq</code>।</td>
+            </tr>
+          </tbody>
+        </table>
+
+<pre><span class="cm"># আধুনিক ও পরিষ্কার Pythonic স্টাইল (প্রতিদিন ML কোডে কাজে লাগবে)</span>
+features = [<span class="nu">0.2</span>, <span class="nu">0.8</span>, <span class="nu">-0.5</span>]
+labels   = [<span class="nu">0</span>,   <span class="nu">1</span>,   <span class="nu">0</span>]
+
+<span class="kw">for</span> idx, (x, y) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">zip</span>(features, labels, strict=<span class="kw">True</span>)):
+    <span class="fn">print</span>(<span class="st">f"sample=</span>{idx:<span class="nu">02d</span>}<span class="st"> | x=</span>{x:<span class="nu">+.2f</span>}<span class="st"> | y=</span>{y}<span class="st">"</span>)
+
+<span class="cm"># গাণিতিক চেইনড কম্প্যারিশন (C-তে সরাসরি সম্ভব নয়!)</span>
+prob = <span class="nu">0.73</span>
+<span class="kw">assert</span> <span class="nu">0.0</span> &lt;= prob &lt;= <span class="nu">1.0</span></pre>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section class="section-card" id="sec-3">
+        <div class="sec-eyebrow">অধ্যায় ০.১.৩ • নীরব ML বাগের ১ নম্বর উৎস</div>
+        <h2>৩. Python-এর অবজেক্ট ও রেফারেন্স মডেল (Aliasing বনাম Shallow বনাম Deep Copy)</h2>
+        <p>
+          C++-এ <code>std::vector&lt;int&gt; b = a;</code> লিখলে ভেক্টরটি <strong>কপি</strong> হয়। কিন্তু Python-এ <code>b = a</code> লিখলে <strong>কখনোই ডেটা কপি হয় না!</strong> Python-এর ভেরিয়েবল কোনো মেমরি বক্স নয়, বরং হিপে থাকা অবজেক্টের গায়ে লাগানো <strong>নেম ট্যাগ (পয়েন্টার)</strong>।
+        </p>
+        <ul>
+          <li><strong>Immutable টাইপ:</strong> <code>int</code>, <code>float</code>, <code>bool</code>, <code>str</code>, <code>tuple</code>, <code>frozenset</code>। এখানে <code>x += 1</code> করলে নতুন অবজেক্ট তৈরি হয়—অন্য কোনো ভেরিয়েবল নষ্ট হয় না।</li>
+          <li><strong>Mutable টাইপ:</strong> <code>list</code>, <code>dict</code>, <code>set</code>, কাস্টম অবজেক্ট, NumPy অ্যারে। ইন-প্লেস পরিবর্তন করলে (<code>.append()</code>, <code>a[0] = 9</code>) ওই অবজেক্টে পয়েন্ট করা <strong>সব ভেরিয়েবল নীরবে বদলে যায়!</strong></li>
+          <li><strong>Pass-by-Object-Reference:</strong> কোনো ফাংশনে ডেটাসেট লিস্ট পাঠালে একই অবজেক্টের রেফারেন্স যায়। ফাংশনের ভেতর ইন-প্লেস নরমালাইজ করলে বাইরের মূল ডেটাসেটও নীরবে বদলে যাবে!</li>
+        </ul>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 760 215" width="100%" role="img" aria-label="Aliasing বনাম Shallow Copy বনাম Deep Copy ডায়াগ্রাম">
+            <rect x="8" y="10" width="234" height="195" rx="8" fill="#141418" stroke="#f43f5e"/>
+            <text x="20" y="32" fill="#fb7185" font-size="12" font-weight="700" font-family="monospace">1. Alias: b = a</text>
+            <rect x="22" y="48" width="44" height="24" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="44" y="64" text-anchor="middle" fill="#f4f4f5" font-size="11" font-family="monospace">a</text>
+            <rect x="22" y="84" width="44" height="24" rx="4" fill="#1c1c22" stroke="#fb7185"/>
+            <text x="44" y="100" text-anchor="middle" fill="#f4f4f5" font-size="11" font-family="monospace">b</text>
+            <line x1="66" y1="60" x2="108" y2="75" stroke="#38bdf8" stroke-width="1.8"/>
+            <line x1="66" y1="96" x2="108" y2="85" stroke="#fb7185" stroke-width="1.8"/>
+            <rect x="110" y="54" width="118" height="52" rx="5" fill="#1c1c22" stroke="#f43f5e"/>
+            <text x="169" y="75" text-anchor="middle" fill="#f4f4f5" font-size="11" font-family="monospace">Outer List</text>
+            <text x="169" y="94" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="monospace">[row0, row1]</text>
+            <text x="20" y="140" fill="#fb7185" font-size="11" font-family="monospace">id(a) == id(b)</text>
+            <text x="20" y="160" fill="#a1a1aa" font-size="11">b বদলালে সরাসরি a বদলায়</text>
+            <text x="20" y="178" fill="#a1a1aa" font-size="11">(দুটোই একই মেমরি!)।</text>
+
+            <rect x="258" y="10" width="244" height="195" rx="8" fill="#141418" stroke="#f59e0b"/>
+            <text x="270" y="32" fill="#fbbf24" font-size="12" font-weight="700" font-family="monospace">2. Shallow: b = a.copy()</text>
+            <rect x="272" y="48" width="90" height="28" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="317" y="66" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">a: Outer #1</text>
+            <rect x="272" y="92" width="90" height="28" rx="4" fill="#1c1c22" stroke="#fbbf24"/>
+            <text x="317" y="110" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">b: Outer #2</text>
+            <line x1="362" y1="62" x2="404" y2="82" stroke="#38bdf8" stroke-width="1.8"/>
+            <line x1="362" y1="106" x2="404" y2="90" stroke="#fbbf24" stroke-width="1.8"/>
+            <rect x="406" y="64" width="84" height="44" rx="5" fill="#1c1c22" stroke="#f43f5e"/>
+            <text x="448" y="83" text-anchor="middle" fill="#fb7185" font-size="10" font-weight="700" font-family="monospace">SHARED!</text>
+            <text x="448" y="99" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">[1.0, 2.0]</text>
+            <text x="270" y="144" fill="#fbbf24" font-size="11">বাইরের লিস্ট আলাদা, কিন্তু</text>
+            <text x="270" y="162" fill="#fb7185" font-size="11" font-family="monospace">id(a[0]) == id(b[0]) !!</text>
+            <text x="270" y="182" fill="#a1a1aa" font-size="11">b[0][0] বদলালে a[0] নষ্ট হয়!</text>
+
+            <rect x="518" y="10" width="234" height="195" rx="8" fill="#141418" stroke="#34d399"/>
+            <text x="530" y="32" fill="#34d399" font-size="12" font-weight="700" font-family="monospace">3. Deep: deepcopy(a)</text>
+            <rect x="532" y="48" width="84" height="28" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="574" y="66" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">a: Outer #1</text>
+            <line x1="616" y1="62" x2="646" y2="62" stroke="#38bdf8" stroke-width="1.8"/>
+            <rect x="648" y="48" width="90" height="28" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="693" y="66" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">[1.0, 2.0]</text>
+            <rect x="532" y="94" width="84" height="28" rx="4" fill="#1c1c22" stroke="#34d399"/>
+            <text x="574" y="112" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">b: Outer #2</text>
+            <line x1="616" y1="108" x2="646" y2="108" stroke="#34d399" stroke-width="1.8"/>
+            <rect x="648" y="94" width="90" height="28" rx="4" fill="#1c1c22" stroke="#34d399"/>
+            <text x="693" y="112" text-anchor="middle" fill="#34d399" font-size="10" font-family="monospace">[1.0, 2.0]</text>
+            <text x="530" y="152" fill="#34d399" font-size="11">সম্পূর্ণ আলাদা মেমরি!</text>
+            <text x="530" y="172" fill="#a1a1aa" font-size="11">b বদলালেও মূল ডেটাসেট a</text>
+            <text x="530" y="188" fill="#a1a1aa" font-size="11">একদম অক্ষত থাকে।</text>
+          </svg>
+          <div class="diagram-caption">চিত্র ২: 2D ডেটাসেটে <code>list(data)</code> বা <code>data[:]</code> দিয়ে শ্যালো কপি করা Python ML পাইপলাইনের অন্যতম বড় নীরব বাগ।</div>
+        </div>
+
+        <h3>ইন্টারেক্টিভ সিমুলেটর: Reference Aliasing এবং <code>[[0]*3]*3</code> ফাঁদ নিজ চোখে দেখো</h3>
+        <div class="sim-box">
+          <div class="sim-controls">
+            <div class="sim-field">
+              <label for="simMode">পরিস্থিতি বেছে নাও</label>
+              <select id="simMode" onchange="runObjSim()">
+                <option value="alias">১. Aliasing: b = a</option>
+                <option value="shallow">২. Shallow Copy: b = a.copy()</option>
+                <option value="deep">৩. Deep Copy: copy.deepcopy(a)</option>
+                <option value="mult_trap">৪. ম্যাট্রিক্স ফাঁদ: W = [[0, 0, 0]] * 3</option>
+              </select>
+            </div>
+            <div class="sim-field">
+              <label for="simRow">Row</label>
+              <select id="simRow" onchange="runObjSim()">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+            <div class="sim-field">
+              <label for="simCol">Col</label>
+              <select id="simCol" onchange="runObjSim()">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+            <div class="sim-field">
+              <label for="simVal">নতুন মান</label>
+              <input type="number" id="simVal" value="99" style="width:82px;" oninput="runObjSim()" />
+            </div>
+            <button class="sim-btn" onclick="runObjSim()">সিমুলেট করো</button>
+          </div>
+          <div class="sim-output" id="simOutput"></div>
+          <div class="sim-alert" id="simAlert"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 4 -->
+      <section class="section-card" id="sec-4">
+        <div class="sec-eyebrow">অধ্যায় ০.১.৪ • অ্যালগরিদম ও কমপ্লেক্সিটি</div>
+        <h2>৪. মূল ডেটা স্ট্রাকচার, Slicing এবং Comprehensions</h2>
+        <p>
+          যেহেতু তোমার DSA ভালো জানা আছে, তাই Python-এর বিল্ট-ইন কন্টেইনারগুলোকে সরাসরি তাদের ভেতরের C ইমপ্লিমেন্টেশন ও Big-O কমপ্লেক্সিটির সাথে মিলিয়ে নাও:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>টাইপ</th>
+              <th>ভেতরের গঠন</th>
+              <th>মূল টাইম কমপ্লেক্সিটি</th>
+              <th>ML-এ প্রধান ব্যবহার</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>list</code></td>
+              <td><code>PyObject*</code> পয়েন্টারের ডায়নামিক অ্যারে</td>
+              <td>ইনডেক্স <code>O(1)</code>, <code>append/pop()</code> amortized <code>O(1)</code>, <code>pop(0)</code> বা <code>x in list</code> <strong><code>O(n)</code></strong></td>
+              <td>ব্যাচ তালিকা, লস হিস্ট্রি, ক্রমানুসারে ডেটা</td>
+            </tr>
+            <tr>
+              <td><code>tuple</code></td>
+              <td>অপরিবর্তনীয় (Immutable) ফিক্সড পয়েন্টার অ্যারে</td>
+              <td>ইনডেক্স <code>O(1)</code>, হ্যাশেবল</td>
+              <td>টেনসর শেপ <code>(batch, seq, dim)</code>, ডিক্ট কী, একাধিক রিটার্ন ভ্যালু</td>
+            </tr>
+            <tr>
+              <td><code>dict</code></td>
+              <td>কম্প্যাক্ট হ্যাশ টেবিল (Py 3.7 থেকে অর্ডার সংরক্ষণ করে)</td>
+              <td>সার্চ/ইনসার্ট/ডিলিট গড়ে <strong><code>O(1)</code></strong></td>
+              <td>টোকেনাইজার ভোকাব <code>token -&gt; id</code>, হাইপারপ্যারামিটার কনফিগ, <code>state_dict</code></td>
+            </tr>
+            <tr>
+              <td><code>set</code></td>
+              <td>হ্যাশ টেবিল (শুধু কী)</td>
+              <td>মেম্বারশিপ <code>x in s</code> গড়ে <strong><code>O(1)</code></strong></td>
+              <td>ডুপ্লিকেট বাদ দেওয়া, ট্রেন/টেস্ট ওভারল্যাপ লিকেজ দ্রুত চেক করা!</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <strong>নীরব পারফরম্যান্স কিলার:</strong> ১ লাখ স্যাম্পলের লুপের ভেতরে <code>if sample_id in train_ids:</code> লিখলে <code>train_ids</code> যদি <code>list</code> হয় তবে সময় লাগবে <strong>O(N²)</strong> (মিনিটের পর মিনিট হ্যাং হবে!), আর <code>set</code> হলে লাগবে <strong>O(N)</strong> (মাত্র কয়েক মিলিসেকেন্ড!)।
+        </div>
+
+        <h3>Slicing ও Comprehensions</h3>
+<pre><span class="cm"># স্লাইসিং: seq[start : stop : step] (stop বাদ থাকে; সবসময় নতুন শ্যালো লিস্ট দেয়)</span>
+nums = [<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">30</span>, <span class="nu">40</span>, <span class="nu">50</span>]
+nums[-<span class="nu">1</span>]       <span class="cm"># 50 (শেষ উপাদান)</span>
+nums[<span class="nu">1</span>:<span class="nu">4</span>]      <span class="cm"># [20, 30, 40]</span>
+nums[::<span class="nu">-1</span>]     <span class="cm"># [50, 40, 30, 20, 10] (উল্টো কপি)</span>
+
+<span class="cm"># List ও Dict Comprehension</span>
+squares  = [x * x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">6</span>) <span class="kw">if</span> x % <span class="nu">2</span> == <span class="nu">0</span>]           <span class="cm"># [0, 4, 16]</span>
+vocab    = {tok: i <span class="kw">for</span> i, tok <span class="kw">in</span> <span class="fn">enumerate</span>([<span class="st">"&lt;pad&gt;"</span>, <span class="st">"cat"</span>, <span class="st">"dog"</span>])}
+<span class="cm"># পিওর Python-এ নিরাপদ 3x3 জিরো ম্যাট্রিক্স তৈরির সঠিক নিয়ম:</span>
+W_safe   = [[<span class="nu">0.0</span> <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">3</span>)] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">3</span>)]         <span class="cm"># ৩টি সম্পূর্ণ আলাদা রো!</span></pre>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section class="section-card" id="sec-5">
+        <div class="sec-eyebrow">অধ্যায় ০.১.৫ • ফাংশন ও সূক্ষ্ম ফাঁদ</div>
+        <h2>৫. ফাংশন, <code>*args/**kwargs</code>, মিউটেবল ডিফল্ট এবং Late-Binding Closures</h2>
+        <p>
+          Python ফাংশনের দুটি ক্লাসিক ফাঁদ অনেক অভিজ্ঞ C++/Java ডেভেলপারের ML এক্সপেরিমেন্টকেও নীরবে নষ্ট করে দেয়:
+        </p>
+
+        <h3>ফাঁদ ক: মিউটেবল ডিফল্ট আর্গুমেন্ট (<code>def</code> হওয়ার সময় মাত্র একবার তৈরি হয়!)</h3>
+<pre><span class="cm"># বাগযুক্ত কোড: লিস্ট [] কেবল ফাংশন ডিফাইন হওয়ার সময় একবার তৈরি হয়, প্রতি কলে নয়!</span>
+<span class="kw">def</span> <span class="fn">log_loss</span>(val, history=<span class="bad">[]</span>):
+    history.append(val)
+    <span class="kw">return</span> history
+
+run1 = log_loss(<span class="nu">0.9</span>)   <span class="cm"># [0.9]</span>
+run2 = log_loss(<span class="nu">0.4</span>)   <span class="cm"># [0.9, 0.4] &lt;-- Run 1-এর ডেটা Run 2-এ ঢুকে পড়েছে!</span>
+
+<span class="cm"># সঠিক নিয়ম: সবসময় None ব্যবহার করো</span>
+<span class="kw">def</span> <span class="fn">log_loss_safe</span>(val: <span class="ty">float</span>, history: <span class="ty">list</span>[<span class="ty">float</span>] | <span class="kw">None</span> = <span class="kw">None</span>) -&gt; <span class="ty">list</span>[<span class="ty">float</span>]:
+    <span class="kw">if</span> history <span class="kw">is</span> <span class="kw">None</span>:
+        history = []
+    history.append(val)
+    <span class="kw">return</span> history</pre>
+
+        <h3>ফাঁদ খ: লুপের ভেতর Late-Binding Closure</h3>
+<pre><span class="cm"># বাগযুক্ত: প্রতিটি lambda কল হওয়ার সময় `r`-এর শেষ মান (0.001) খুঁজে বের করে!</span>
+scalers = [<span class="kw">lambda</span> x: x * <span class="bad">r</span> <span class="kw">for</span> r <span class="kw">in</span> [<span class="nu">0.1</span>, <span class="nu">0.01</span>, <span class="nu">0.001</span>]]
+[f(<span class="nu">100</span>) <span class="kw">for</span> f <span class="kw">in</span> scalers]  <span class="cm"># [0.1, 0.1, 0.1] &lt;-- তিনটাই 0.001 নিয়েছে!</span>
+
+<span class="cm"># সঠিক: ডিফল্ট আর্গুমেন্ট দিয়ে তখনই মানটি আটকে দাও</span>
+scalers_ok = [<span class="kw">lambda</span> x, rate=r: x * rate <span class="kw">for</span> r <span class="kw">in</span> [<span class="nu">0.1</span>, <span class="nu">0.01</span>, <span class="nu">0.001</span>]]
+[f(<span class="nu">100</span>) <span class="kw">for</span> f <span class="kw">in</span> scalers_ok]  <span class="cm"># [10.0, 1.0, 0.1] ✓</span></pre>
+      </section>
+
+      <!-- SECTION 6 -->
+      <section class="section-card" id="sec-6">
+        <div class="sec-eyebrow">অধ্যায় ০.১.৬ • মেমরি-নিরাপদ ডেটা স্ট্রিমিং</div>
+        <h2>৬. Iterators, লেজি Generators (<code>yield</code>) ও Context Managers (<code>with</code>)</h2>
+        <p>
+          মনে রেখো, তোমার ল্যাপটপে RAM আছে <strong>৭.৪ GiB</strong>। ৫০ লাখ ট্রেনিং স্যাম্পল একসাথে একটি Python <code>list</code>-এ লোড করতে গেলে OS সাথে সাথে প্রসেস কিল করে দেবে (OOM)। এর সমাধান হলো <strong>Generator</strong> (যে ফাংশনে <code>yield</code> থাকে): এটি একবারে কেবল <em>একটি</em> ব্যাচ তৈরি করে থেমে থাকে, ফলে মেমরি খরচ হয় <strong>O(batch_size)</strong>—পুরো ডেটাসেটের <strong>O(N)</strong> নয়!
+        </p>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 760 155" width="100%" role="img" aria-label="Eager List বনাম Lazy Generator মেমরি তুলনা">
+            <rect x="10" y="12" width="355" height="130" rx="8" fill="#141418" stroke="#f43f5e"/>
+            <text x="24" y="34" fill="#fb7185" font-size="12" font-weight="700" font-family="monospace">Eager List: [load(i) for i in range(1_000_000)]</text>
+            <rect x="24" y="50" width="324" height="32" rx="4" fill="#2c141c" stroke="#f43f5e"/>
+            <text x="186" y="70" text-anchor="middle" fill="#fb7185" font-size="11">একসাথে ১০ লাখ স্যাম্পল RAM-এ → মেমরি ক্র্যাশ (OOM)!</text>
+            <text x="24" y="106" fill="#a1a1aa" font-size="11">মেমরি: O(N) • পুরো ডেটা লোড না হওয়া পর্যন্ত শুরু হয় না</text>
+            <text x="24" y="125" fill="#71717a" font-size="11">কেবল ছোট ডেটাসেটের জন্য উপযুক্ত।</text>
+
+            <rect x="392" y="12" width="358" height="130" rx="8" fill="#141418" stroke="#34d399"/>
+            <text x="406" y="34" fill="#34d399" font-size="12" font-weight="700" font-family="monospace">Lazy Generator: yield batch  (DataLoader প্যাটার্ন)</text>
+            <rect x="406" y="50" width="76" height="32" rx="4" fill="#122b22" stroke="#34d399"/>
+            <text x="444" y="70" text-anchor="middle" fill="#34d399" font-size="10" font-family="monospace">Batch 1</text>
+            <text x="498" y="70" fill="#a1a1aa" font-size="13">→</text>
+            <rect x="518" y="50" width="90" height="32" rx="4" fill="#1c1c22" stroke="#818cf8"/>
+            <text x="563" y="70" text-anchor="middle" fill="#818cf8" font-size="10" font-family="monospace">Train Step</text>
+            <text x="624" y="70" fill="#a1a1aa" font-size="13">→</text>
+            <rect x="644" y="50" width="92" height="32" rx="4" fill="#1c1c22" stroke="#383844"/>
+            <text x="690" y="70" text-anchor="middle" fill="#71717a" font-size="10" font-family="monospace">GC / Next</text>
+            <text x="406" y="106" fill="#34d399" font-size="11">মেমরি: O(batch_size) • তাৎক্ষণিক শুরু</text>
+            <text x="406" y="125" fill="#a1a1aa" font-size="11">মনে রেখো: Generator একবার শেষ হলে নতুন ইপকে আবার বানাতে হয়।</text>
+          </svg>
+          <div class="diagram-caption">চিত্র ৩: কেন বাস্তব ML পাইপলাইন বিশাল লিস্ট না বানিয়ে Generator দিয়ে ডেটা স্ট্রিম করে।</div>
+        </div>
+
+<pre><span class="kw">def</span> <span class="fn">batch_stream</span>(data, batch_size: <span class="ty">int</span>):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">0</span>, <span class="fn">len</span>(data), batch_size):
+        <span class="kw">yield</span> data[i : i + batch_size]
+
+<span class="cm"># Context Manager (`with`): C++-এর RAII প্যাটার্নের সমতুল্য!</span>
+<span class="cm"># ব্লক থেকে বের হলেই (এক্সসেপশন হলেও) __exit__() অটোমেটিক রিসোর্স ক্লিন করে।</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"metrics.csv"</span>, <span class="st">"w"</span>, encoding=<span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    f.write(<span class="st">"step,loss\n"</span>)</pre>
+      </section>
+
+      <!-- SECTION 7 -->
+      <section class="section-card" id="sec-7">
+        <div class="sec-eyebrow">অধ্যায় ০.১.৭ • PyTorch-এর ভেতরের গোপন ইঞ্জিন</div>
+        <h2>৭. OOP ও Dunder Methods — <code>PyTorch</code> এবং <code>Autograd</code> কীভাবে কাজ করে</h2>
+        <p>
+          Python-এ বিশেষ ডাবল-আন্ডারস্কোর (<strong>Dunder</strong>) মেথডগুলো তোমার ক্লাসকে সরাসরি Python সিনট্যাক্সের সাথে যুক্ত করে (C++-এর অপারেটর ওভারলোডিংয়ের মতো, তবে আরও শক্তিশালী)। <code>PyTorch</code>-এর প্রায় প্রতিটি "জাদুকরী" লাইন আসলে একটি Dunder মেথড কল:
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ML / PyTorch কোড</th>
+              <th>Python ভেতরে যে Dunder মেথড কল করে</th>
+              <th>কেন রিসার্চারদের জন্য জরুরি</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>len(dataset)</code></td>
+              <td><code>dataset.__len__()</code></td>
+              <td>ডেটাসেটে মোট কতটি স্যাম্পল আছে তা DataLoader-কে জানায়।</td>
+            </tr>
+            <tr>
+              <td><code>dataset[i]</code> বা <code>dataset[-1]</code></td>
+              <td><code>dataset.__getitem__(i)</code></td>
+              <td>ইনডেক্স বা স্লাইস দিয়ে প্রয়োজনমতো ডেটা লোড করে।</td>
+            </tr>
+            <tr>
+              <td><code>logits = model(x)</code></td>
+              <td><code>model.__call__(x)</code></td>
+              <td>অবজেক্টকে ফাংশনের মতো কল করতে দেয় (PyTorch এখানে hooks + <code>forward(x)</code> চালায়)।</td>
+            </tr>
+            <tr>
+              <td><code>c = a * b + d</code></td>
+              <td><code>a.__mul__(b)</code> তারপর <code>.__add__(d)</code></td>
+              <td><strong>ঠিক এভাবেই Autograd কম্পিউটেশন গ্রাফ তৈরি করে!</strong></td>
+            </tr>
+            <tr>
+              <td><code>c = 2.0 * a</code></td>
+              <td><code>float.__mul__</code> ব্যর্থ হয়ে <strong><code>a.__rmul__(2.0)</code></strong> কল করে</td>
+              <td><code>__radd__</code>/<code>__rmul__</code> না লিখলে <code>2.0 * tensor</code> দিলে <code>TypeError</code> আসবে!</td>
+            </tr>
+            <tr>
+              <td><code>print(tensor)</code></td>
+              <td><code>tensor.__repr__()</code></td>
+              <td>ডিবাগিংয়ের জন্য শেপ, টাইপ ও মান স্পষ্ট দেখায়।</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SECTION 8 -->
+      <section class="section-card" id="sec-8">
+        <div class="sec-eyebrow">অধ্যায় ০.১.৮ • নিজেকে যাচাই করো</div>
+        <h2>৮. ইন্টারেক্টিভ ৬-প্রশ্নের কুইজ (<span id="quizScore">0</span>/6)</h2>
+        <p>ল্যাব ০এ খোলার আগে ধারণাগুলো যাচাই করো। আন্দাজে না দিয়ে ৬/৬ টার্গেট রাখো। <button class="top-btn" onclick="resetQuiz()" style="margin-left:8px;">রিসেট কুইজ</button></p>
+
+        <div class="quiz-item" data-answer="1" data-explain="সঠিক! Python-এর // অপারেটর ঋণাত্মক অসীমের (−∞) দিকে ফ্লোর করে: -7 / 2 = -3.5 থেকে নিচে নেমে -4 হয় (C++-এর মতো শূন্যের দিকে -3 হয় না)।">
+          <div class="quiz-q">প্রশ্ন ১: Python 3-এ <code>-7 // 2</code>-এর মান কত (এবং C/C++-এর ইন্টিজার <code>-7 / 2</code>-এর সাথে পার্থক্য কী)?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">ক) Python-এ <code>-3</code>, C++-এ <code>-4</code></button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">খ) Python-এ <code>-4</code> (−∞-এর দিকে ফ্লোর), C++-এ <code>-3</code> (০-এর দিকে ট্রাঙ্কেট)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">গ) Python-এ <code>-3.5</code>, C++-এ <code>-3</code></button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="2" data-explain="সঠিক! raw.copy() শুধু বাইরের লিস্ট কপি করে—ভেতরের রো লিস্টগুলোর রেফারেন্স আগের মতোই শেয়ার করা থাকে। তাই train[0][0] বদলালে raw[0][0] নীরবে ৯৯.০ হয়ে যায়!">
+          <div class="quiz-q">প্রশ্ন ২: <code>raw = [[1.0, 2.0], [3.0, 4.0]]</code> থেকে <code>train = raw.copy()</code> করে <code>train[0][0] = 99.0</code> করলে এখন <code>raw[0][0]</code> কত হবে?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">ক) <code>1.0</code> — কারণ <code>.copy()</code> সব নেস্টেড লিস্ট আলাদা করে দিয়েছে</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">খ) <code>TypeError</code> দেখাবে</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">গ) <code>99.0</code> — কারণ <code>.copy()</code> হলো শ্যালো কপি, ভেতরের রো এখনো শেয়ারড!</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="0" data-explain="সঠিক! [[0.0]*3]*3 একই রো অবজেক্টের রেফারেন্স ৩ বার কপি করে। ফলে একটি রো বদলালে বাকি সব রো-ও বদলে যায়!">
+          <div class="quiz-q">প্রশ্ন ৩: ৩×৩ ওয়েট ম্যাট্রিক্স বানানোর জন্য <code>W = [[0.0] * 3] * 3</code> লেখা কেন ভয়াবহ বাগ?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">ক) তিনটি রো-ই মেমরিতে ঠিক একই ভেতরের লিস্ট অবজেক্টকে নির্দেশ করে</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">খ) লিস্টের ভেতরে ফ্লোট গুণ করা যায় না</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">গ) এটি 2D-এর বদলে 1D লিস্ট তৈরি করে</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="1" data-explain="সঠিক! ডিফল্ট আর্গুমেন্ট ফাংশন ডিফাইন হওয়ার সময় মাত্র একবার তৈরি হয়—তাই প্রতিটি কল একই লিস্ট শেয়ার ও দূষিত করে।">
+          <div class="quiz-q">প্রশ্ন ৪: ML এক্সপেরিমেন্ট লগারে কখনোই <code>def record(x, buf=[]):</code> লেখা উচিত নয় কেন?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">ক) Python খালি লিস্ট আর্গুমেন্ট নিতে দেয় না</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">খ) ডিফল্ট লিস্টটি def হওয়ার সময় একবারই তৈরি হয় এবং সব কলে শেয়ার হয়</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">গ) এতে টাইম কমপ্লেক্সিটি O(n²) হয়ে যায়</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="2" data-explain="সঠিক! yield জেনারেটর একবারে শুধু একটি মিনি-ব্যাচ তৈরি করে, তাই মেমরি খরচ O(batch_size) থাকে—পুরো ডেটাসেট RAM-এ আনতে হয় না।">
+          <div class="quiz-q">প্রশ্ন ৫: ৭.৪ GiB RAM-এর ল্যাপটপে ১ কোটি ডেটা ৬৪-ব্যাচে প্রসেস করতে হলে লিস্টের বদলে <code>yield</code> জেনারেটরের মূল সুবিধা কী?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">ক) জেনারেটর স্বয়ংক্রিয়ভাবে GPU-তে চলে</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">খ) জেনারেটরে <code>gen[500]</code> দিয়ে সরাসরি ইনডেক্স করা যায়</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">গ) লেজি ইভ্যালুয়েশনের ফলে মেমরি খরচ O(N)-এর বদলে O(batch_size) থাকে</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="0" data-explain="সঠিক! 3.0 * a চালালে float.__mul__ NotImplemented রিটার্ন করে, তখন Python স্বয়ংক্রিয়ভাবে a.__rmul__(3.0) কল করে।">
+          <div class="quiz-q">প্রশ্ন ৬: তোমার <code>MiniScalar</code> ক্লাসে <code>__mul__</code> লেখায় <code>a * 3.0</code> কাজ করছে, কিন্তু <code>3.0 * a</code> দিলে <code>TypeError</code> আসছে। কোন Dunder মেথড এটি ঠিক করবে?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">ক) <code>__rmul__</code> (রিফ্লেক্টেড মাল্টিপ্লিকেশন)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">খ) <code>__call__</code></button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">গ) <code>__getitem__</code></button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 9 -->
+      <section class="section-card" id="sec-lab">
+        <div class="sec-eyebrow">অধ্যায় ০.১.৯ • ধাপ ৩ ও ৪: পিওর Python হাতে-কলমে ল্যাব</div>
+        <h2>৯. পরবর্তী ধাপ: ল্যাব ০এ শুরু করো (Python Internals ও নীরব ML বাগ ফরেনসিকস)</h2>
+        <p>
+          এবার <code>Stage_0_Numerical_Computing_Bedrock/labs/lab0a_python_internals_ml_bugs/</code> ফোল্ডারে গিয়ে হাতে-কলমে কোড চালাও। আমাদের কড়া নিয়ম মনে রেখো: <strong>ল্যাবের সমাধান নিজে লিখবে—AI দিয়ে অটোপাইলট করবে না!</strong>
+        </p>
+        <ul>
+          <li><strong>পার্ট ১ (মেমরি পর্যবেক্ষণ):</strong> <code>part1_object_inspector.py</code> চালিয়ে আসল <code>id()</code> ঠিকানা, রেফারেন্স কাউন্ট, শ্যালো বনাম ডিপ কপি এবং জেনারেটরের RAM ব্যবহার দেখো।</li>
+          <li><strong>পার্ট ২ (৪টি নীরব ML বাগ):</strong> <code>part2_buggy_ml_pipeline.py</code> চালিয়ে দেখো কীভাবে কোনো ক্র্যাশ ছাড়াই ৪টি ফাংশন এক্সপেরিমেন্ট নষ্ট করে দিচ্ছে।</li>
+          <li><strong>পার্ট ৩ (নিজে তৈরি ও ভেরিফাই):</strong> <code>part3_solution_template.py</code>-এর ৬টি টাস্ক নিজে কোড করে <code>python3 verify_lab0a.py</code>-এ ১০০% পাস করো!</li>
+        </ul>
+<pre><span class="cm"># তোমার লিনাক্স টার্মিনালেই সরাসরি চালাও (কোনো বাড়তি প্যাকেজ লাগবে না!)</span>
+<span class="fn">cd</span> Stage_0_Numerical_Computing_Bedrock/labs/lab0a_python_internals_ml_bugs
+<span class="fn">python3</span> part1_object_inspector.py
+<span class="fn">python3</span> part2_buggy_ml_pipeline.py
+<span class="fn">python3</span> verify_lab0a.py</pre>
+        <p style="font-size:0.86rem; color:var(--text-dim);">
+          বিস্তারিত মিশন ও ক্লিকেবল হিন্টস পড়ো: <a href="../labs/lab0a_python_internals_ml_bugs/README.md"><code>labs/lab0a_python_internals_ml_bugs/README.md</code></a>।
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "marajul_aiml_theme";
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      document.getElementById("themeBtn").textContent = t === "dark" ? "Light" : "Dark";
+    }
+    function toggleTheme() {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      try { localStorage.setItem(THEME_KEY, next); } catch {}
+      applyTheme(next);
+    }
+    applyTheme((() => { try { return localStorage.getItem(THEME_KEY) || "dark"; } catch { return "dark"; } })());
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function runObjSim() {
+      const mode = document.getElementById("simMode").value;
+      const r = parseInt(document.getElementById("simRow").value, 10);
+      const c = parseInt(document.getElementById("simCol").value, 10);
+      const val = Number(document.getElementById("simVal").value || 0);
+
+      let lines = [];
+      let alertCls = "alert-bad";
+      let alertMsg = "";
+
+      if (mode === "mult_trap") {
+        const row = [0, 0, 0];
+        row[c] = val;
+        const W = [row, row, row];
+        lines = [
+          `W = [[0, 0, 0]] * 3`,
+          `পরিবর্তন: W[${r}][${c}] = ${val}`,
+          `Row IDs : id(W[0])=0x7f01a0  id(W[1])=0x7f01a0  id(W[2])=0x7f01a0  (সব একই!)`,
+          `ফলাফল W: ${JSON.stringify(W)}`
+        ];
+        alertCls = "alert-bad";
+        alertMsg = `নীরব ML বাগ! W[${r}][${c}] বদলাতেই ৩টি রো-এর কলাম ${c} একসাথে বদলে গেছে—কারণ '*' একই রো রেফারেন্স ৩ বার কপি করেছে!`;
+      } else {
+        const a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        let b;
+        let idInfo;
+        if (mode === "alias") {
+          b = a;
+          b[r][c] = val;
+          idInfo = `id(a)==id(b) [0x7f1000] | id(a[${r}])==id(b[${r}]) [0x7f10${r}0]`;
+          alertCls = "alert-bad";
+          alertMsg = `নীরব Aliasing বাগ! b = a কোনো কপি করেনি। b[${r}][${c}] = ${val} করতেই মূল ডেটাসেট a[${r}][${c}] দূষিত হয়ে গেছে!`;
+        } else if (mode === "shallow") {
+          b = a.slice();
+          b[r][c] = val;
+          idInfo = `id(a)=0x7f1000 != id(b)=0x7f2000 | কিন্তু id(a[${r}])==id(b[${r}]) [0x7f10${r}0]!!`;
+          alertCls = "alert-bad";
+          alertMsg = `Shallow Copy ফাঁদ! বাইরের লিস্ট আলাদা হলেও ভেতরের রো এখনো শেয়ারড—ফলে মূল ডেটাসেট a[${r}][${c}] নীরবে বদলে গেছে!`;
+        } else {
+          b = a.map(row => row.slice());
+          b[r][c] = val;
+          idInfo = `id(a)=0x7f1000 != id(b)=0x7f2000 | id(a[${r}])=0x7f10${r}0 != id(b[${r}])=0x7f20${r}0 (নিরাপদ)`;
+          alertCls = "alert-ok";
+          alertMsg = `সম্পূর্ণ নিরাপদ! copy.deepcopy(a) বাইরের লিস্ট ও ভেতরের প্রতিটি রো আলাদা মেমরিতে কপি করেছে—মূল ডেটাসেট a অক্ষত আছে।`;
+        }
+        lines = [
+          `পরিবর্তন  : b[${r}][${c}] = ${val}`,
+          `পয়েন্টার  : ${idInfo}`,
+          `মূল a     : ${JSON.stringify(a)}`,
+          `পরিবর্তিত b: ${JSON.stringify(b)}`
+        ];
+      }
+
+      document.getElementById("simOutput").innerHTML = lines.map(l => `<div>${escapeHtml(l)}</div>`).join("");
+      const al = document.getElementById("simAlert");
+      al.className = "sim-alert " + alertCls;
+      al.textContent = alertMsg;
+    }
+
+    let quizAnswered = {};
+    function answerQuiz(btn, chosenIdx) {
+      const card = btn.closest(".quiz-item");
+      const items = Array.from(document.querySelectorAll(".quiz-item"));
+      const qIdx = items.indexOf(card);
+      const correctIdx = parseInt(card.dataset.answer, 10);
+      const btns = card.querySelectorAll(".quiz-btn");
+      const fb = card.querySelector(".quiz-feedback");
+
+      btns.forEach(b => b.classList.remove("correct", "wrong"));
+      if (chosenIdx === correctIdx) {
+        btn.classList.add("correct");
+        fb.style.color = "var(--emerald)";
+        fb.textContent = "✓ " + card.dataset.explain;
+        quizAnswered[qIdx] = true;
+      } else {
+        btn.classList.add("wrong");
+        fb.style.color = "var(--rose)";
+        fb.textContent = "✗ আরেকবার ভেবে দেখো — ওপরের CPython মেমরি ও ইভ্যালুয়েশন নিয়মটি মিলিয়ে নাও।";
+        quizAnswered[qIdx] = false;
+      }
+      fb.style.display = "block";
+      document.getElementById("quizScore").textContent = Object.values(quizAnswered).filter(Boolean).length;
+    }
+
+    function resetQuiz() {
+      quizAnswered = {};
+      document.getElementById("quizScore").textContent = "0";
+      document.querySelectorAll(".quiz-item").forEach(card => {
+        card.querySelectorAll(".quiz-btn").forEach(b => b.classList.remove("correct", "wrong"));
+        const fb = card.querySelector(".quiz-feedback");
+        fb.style.display = "none";
+        fb.textContent = "";
+      });
+    }
+
+    runObjSim();
+  </script>
+</body>
+</html>

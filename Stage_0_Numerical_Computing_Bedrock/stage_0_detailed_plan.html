@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stage 0 Detailed Plan: Scientific Python &amp; Numerical Computing Bedrock</title>
+  <style>
+    :root {
+      --bg: #09090b;
+      --bg-elevated: #111114;
+      --bg-card: #141418;
+      --bg-subtle: #1c1c22;
+      --border: #26262e;
+      --border-strong: #383844;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #818cf8;
+      --accent-hover: #6366f1;
+      --accent-ink: #0f0e24;
+      --accent-soft: rgba(129, 140, 248, 0.13);
+      --accent-border: rgba(129, 140, 248, 0.38);
+      --link: #38bdf8;
+      --emerald: #34d399;
+      --emerald-soft: rgba(52, 211, 153, 0.12);
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --radius: 10px;
+    }
+
+    [data-theme="light"] {
+      --bg: #fafafa;
+      --bg-elevated: #ffffff;
+      --bg-card: #ffffff;
+      --bg-subtle: #f4f4f5;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --text: #18181b;
+      --text-muted: #52525b;
+      --text-dim: #71717a;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-ink: #ffffff;
+      --accent-soft: rgba(79, 70, 229, 0.1);
+      --accent-border: rgba(79, 70, 229, 0.35);
+      --link: #0284c7;
+      --emerald: #059669;
+      --emerald-soft: rgba(5, 150, 105, 0.1);
+      --amber: #d97706;
+      --rose: #e11d48;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.62;
+      padding-bottom: 72px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.85em;
+      background: var(--bg-subtle);
+      color: var(--link);
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 52px;
+      background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+
+    .topbar-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb .sep { color: var(--text-dim); }
+    .breadcrumb .curr { color: var(--text); }
+
+    .mini-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      max-width: 300px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 720px) { .mini-progress { display: none; } }
+
+    .mini-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .mini-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.25s ease; }
+
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    .top-btn {
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .top-btn:hover { border-color: var(--border-strong); }
+
+    .hero {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 24px 26px;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .hero-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.025em; color: var(--text); margin-bottom: 6px; }
+    .subtitle { color: var(--text-muted); font-size: 0.92rem; max-width: 780px; }
+
+    .action-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    button.btn, a.btn {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 13px;
+      border-radius: 7px;
+      font-size: 0.81rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.btn:hover, a.btn:hover { background: var(--bg-subtle); border-color: var(--border-strong); }
+    .btn-danger { color: var(--rose) !important; }
+
+    .progress-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 13px 16px;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .progress-pct { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+    .progress-track { height: 8px; background: var(--bg-subtle); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.25s ease; }
+
+    main { max-width: 1200px; margin: 26px auto 0; padding: 0 24px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) { .info-grid { grid-template-columns: 1fr; } }
+
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 15px 17px;
+    }
+
+    .info-card h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+
+    .info-card ul { padding-left: 17px; }
+    .info-card li { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px; }
+
+    .module-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+
+    .module-card.active {
+      border-color: var(--accent-border);
+      border-left: 3px solid var(--accent);
+    }
+
+    .mod-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .mod-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+
+    .mod-tag.active { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
+    .mod-title { font-size: 1.12rem; font-weight: 800; color: var(--text); }
+    .mod-desc { font-size: 0.86rem; color: var(--text-muted); margin-top: 4px; max-width: 820px; }
+
+    .mod-links { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .link-chip {
+      font-size: 0.79rem;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 6px 11px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--link);
+    }
+
+    .link-chip.primary {
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
+      color: var(--accent);
+    }
+
+    .link-chip.emerald {
+      background: var(--emerald-soft);
+      border-color: rgba(52, 211, 153, 0.35);
+      color: var(--emerald);
+    }
+
+    .link-chip:hover { border-color: var(--border-strong); }
+
+    .checklist { list-style: none; margin-top: 12px; }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .check-item:hover { background: var(--bg-subtle); }
+    .check-item input { margin-top: 3px; accent-color: var(--accent); cursor: pointer; }
+    .check-item.done { color: var(--text-dim); text-decoration: line-through; }
+
+    .gate-card {
+      background: var(--bg-card);
+      border: 1px solid var(--accent-border);
+      border-left: 3px solid var(--emerald);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-top: 24px;
+    }
+
+    .gate-card h2 { font-size: 1.15rem; color: var(--emerald); margin-bottom: 6px; }
+    .gate-card p { font-size: 0.86rem; color: var(--text-muted); margin-bottom: 12px; }
+
+    @media print {
+      .topbar, .action-bar { display: none !important; }
+      body { background: #ffffff; color: #000000; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar" aria-label="Breadcrumb and Progress">
+    <div class="topbar-inner">
+      <div class="breadcrumb">
+        <a href="../index.html">AI/ML Mastery</a>
+        <span class="sep">/</span>
+        <a href="../master_roadmap.html">Roadmap</a>
+        <span class="sep">/</span>
+        <span class="curr">Stage 0 Syllabus</span>
+      </div>
+      <div class="mini-progress">
+        <span id="miniLabel">0 / 0 Tasks</span>
+        <div class="mini-track"><div class="mini-fill" id="miniFill"></div></div>
+        <span id="miniPct">0%</span>
+      </div>
+      <div class="top-actions">
+        <a class="top-btn" href="./lessons/module0_1_python_for_ml_engineers.html">Module 0.1</a>
+        <button class="top-btn" id="themeBtn" onclick="toggleTheme()">Light</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero-row">
+        <div>
+          <div class="eyebrow">Tier I • Active Stage 0 Detailed Syllabus</div>
+          <h1>Stage 0: Scientific Python, Numerical Computing &amp; Experiment Bedrock</h1>
+          <p class="subtitle">
+            Build ironclad command of Python internals (fast &amp; deep from your C/C++ background), vectorized NumPy memory layouts, IEEE-754 numerical stability, clean data hygiene, and reproducible testing—100% locally on CPU.
+          </p>
+        </div>
+        <div class="action-bar">
+          <button class="btn" onclick="exportProgress()">Export JSON</button>
+          <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importProgress(event)" />
+          <button class="btn" onclick="window.print()">Print / PDF</button>
+          <button class="btn btn-danger" onclick="resetProgress()">Reset</button>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-row">
+          <span>Stage 0 Mastery Progress</span>
+          <span class="progress-pct" id="stagePct">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="stageFill"></div></div>
+        <div style="font-size:0.76rem; color:var(--text-dim); margin-top:5px;" id="stageCount">0 of 0 checklist tasks completed</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="info-grid">
+      <div class="info-card">
+        <h3>Why Stage 0 Matters</h3>
+        <ul>
+          <li>90% of subtle ML bugs are <strong>silent</strong>: aliasing mutations, wrong broadcasting shapes, `NaN` overflow, and train/test leakage.</li>
+          <li>Every PyTorch `Tensor`, `Dataset`, and `Autograd` class rests directly on Python dunder methods &amp; C-contiguous array strides.</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Local Compute Profile</h3>
+        <ul>
+          <li>Designed for your exact machine: Intel <code>i5-1235U</code>, <code>7.4 GiB</code> RAM, <code>Python 3.12</code> (zero GPU needed).</li>
+          <li>Lightweight pure Python + <code>venv</code> workflows—fast feedback loops in milliseconds.</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Anti-Autopilot Rule</h3>
+        <ul>
+          <li>Write every lab solution yourself—<strong>never</strong> let AI generate your lab code.</li>
+          <li>Use AI strictly as a Socratic professor for intuition, hints, and reviewing code you wrote.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div id="modulesRoot"></div>
+
+    <section class="gate-card">
+      <h2>Mastery Gate 0 — Unlock Stage 1 (Code-First Applied Math for ML)</h2>
+      <p>Complete all 5 modules above and verify all 3 exit criteria below before opening Stage 1:</p>
+      <div id="gateRoot"></div>
+    </section>
+  </main>
+
+  <script>
+    const THEME_KEY = "marajul_aiml_theme";
+    const STORAGE_KEY = "marajul_aiml_stage0_v1";
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      document.getElementById("themeBtn").textContent = t === "dark" ? "Light" : "Dark";
+    }
+    function toggleTheme() {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      try { localStorage.setItem(THEME_KEY, next); } catch {}
+      applyTheme(next);
+    }
+    applyTheme((() => { try { return localStorage.getItem(THEME_KEY) || "dark"; } catch { return "dark"; } })());
+
+    const MODULES = [
+      {
+        id: "m01",
+        tag: "★ Module 0.1 • Active",
+        active: true,
+        title: "Python Complete Foundation & Internals (C/C++ → Python Lens)",
+        desc: "Zero-skip, zero-fluff complete revision of Python syntax, types, CPython object/reference memory model, mutability/aliasing traps, comprehensions, generators, closures, OOP, and PyTorch-enabling dunder methods.",
+        links: [
+          { label: "Lecture (English) →", href: "./lessons/module0_1_python_for_ml_engineers.html", cls: "primary" },
+          { label: "লেকচার (বাংলা) →", href: "./lessons/module0_1_python_for_ml_engineers_bn.html", cls: "primary" },
+          { label: "Lab 0A Mission →", href: "./lessons/module0_1_python_for_ml_engineers.html#sec-lab", cls: "emerald" }
+        ],
+        tasks: [
+          { id: "m01_t1", text: "Step 1: Read Module 0.1 Visual HTML Lecture (English or বাংলা), explore the Object/Aliasing simulator, and score 6/6 on the quiz." },
+          { id: "m01_t2", text: "Step 2: Resolve all doubts in বাংলা Socratic Q&A (references, floor division on negatives, closures, yield, dunders)." },
+          { id: "m01_t3", text: "Step 3: Run part1_object_inspector.py & part2_buggy_ml_pipeline.py to observe all 4 silent ML bugs live." },
+          { id: "m01_t4", text: "Step 4: Implement all 6 tasks in part3_solution_template.py (fixes + MiniDataset + Generator + MiniScalar) and pass verify_lab0a.py (100%)." },
+          { id: "m01_t5", text: "Step 5: Write your 4–6 line Feynman explanation in writeups/lab0a_writeup.md and sync AGENT.md." }
+        ]
+      },
+      {
+        id: "m02",
+        tag: "Module 0.2 • Next",
+        active: false,
+        title: "NumPy Core, Vectorization, Broadcasting & Memory Strides",
+        desc: "Understand ndarray contiguous C-memory buffers, strides, views vs copies, broadcasting rules, axis reductions, einsum intuition, and why vectorized code runs 50x–200x faster than Python loops.",
+        links: [],
+        tasks: [
+          { id: "m02_t1", text: "Study Module 0.2 Dual-Language Visual Lecture & Broadcasting / Strides Simulator." },
+          { id: "m02_t2", text: "Inspect real memory strides, C vs Fortran contiguity, and silent view mutation traps in Lab 0B." },
+          { id: "m02_t3", text: "Vectorize pairwise Euclidean distance & batched matrix ops in pure NumPy (benchmark >50x speedup over loops)." },
+          { id: "m02_t4", text: "Complete Lab 0B verification suite & Feynman writeup." }
+        ]
+      },
+      {
+        id: "m03",
+        tag: "Module 0.3",
+        active: false,
+        title: "Floating-Point Reality (IEEE-754) & Numerical Stability",
+        desc: "Dissect sign/exponent/mantissa bits in FP64/FP32/FP16/BF16, subnormals, machine epsilon, catastrophic cancellation, overflow in naive exp(x)/softmax, and the log-sum-exp trick.",
+        links: [],
+        tasks: [
+          { id: "m03_t1", text: "Study Module 0.3 Dual-Language Visual Lecture & IEEE-754 Bit Explorer." },
+          { id: "m03_t2", text: "Break naive Softmax, Cross-Entropy, and Variance formulas with extreme inputs (1e4, -1e4, 1e9+1) in Lab 0C." },
+          { id: "m03_t3", text: "Implement numerically stable log-softmax, log-sum-exp, and Welford online variance; verify zero NaN/Inf." },
+          { id: "m03_t4", text: "Complete Lab 0C verification suite & Feynman writeup." }
+        ]
+      },
+      {
+        id: "m04",
+        tag: "Module 0.4",
+        active: false,
+        title: "Exploratory Data Analysis, Visualization & Leakage Hygiene",
+        desc: "Use Pandas & Matplotlib with scientific discipline: distributions, outliers, missing-value mechanisms, strict train/val/test isolation, and catching subtle preprocessing/temporal leakage.",
+        links: [],
+        tasks: [
+          { id: "m04_t1", text: "Study Module 0.4 Dual-Language Visual Lecture on EDA & Data Leakage taxonomy." },
+          { id: "m04_t2", text: "Audit a messy synthetic dataset in Lab 0D: detect 3 planted leakage bugs (global scaling, target leak, duplicate group split)." },
+          { id: "m04_t3", text: "Build a clean leakage-safe preprocessing & stratified split pipeline + diagnostic plots." },
+          { id: "m04_t4", text: "Complete Lab 0D verification suite & Feynman writeup." }
+        ]
+      },
+      {
+        id: "m05",
+        tag: "Module 0.5",
+        active: false,
+        title: "Reproducible Scientific Python Engineering & Numerical Testing",
+        desc: "Master isolated venv/requirements, deterministic RNG seeding (np.random.default_rng), profiling hotspots (timeit/cProfile), tolerance-based assertions (np.allclose), and clean experiment logging.",
+        links: [],
+        tasks: [
+          { id: "m05_t1", text: "Study Module 0.5 Dual-Language Visual Lecture on Scientific Reproducibility." },
+          { id: "m05_t2", text: "Profile & optimize a slow Python data pipeline in Lab 0E; fix non-deterministic RNG bugs." },
+          { id: "m05_t3", text: "Write tolerance-aware numerical unit tests (pytest/unittest) covering shape, dtype, edge values, and determinism." },
+          { id: "m05_t4", text: "Complete Lab 0E verification suite & Feynman writeup." }
+        ]
+      }
+    ];
+
+    const GATES = [
+      { id: "g0_1", text: "Capstone Build: Ship a clean, tested pure-Python/NumPy mini-toolkit (Dataset + Lazy Batcher + Numerically Stable Softmax/Cross-Entropy + Leakage-Safe Scaler) in Stage_0_Numerical_Computing_Bedrock/tools/." },
+      { id: "g0_2", text: "Bug Forensics: Diagnose & patch 4 unseen silent numerical/Python bugs without AI code generation." },
+      { id: "g0_3", text: "Feynman Oral/Written Check: Explain CPython references, NumPy strides/broadcasting, IEEE-754 log-sum-exp, and train/val leakage cleanly from memory." }
+    ];
+
+    let state = loadState();
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; }
+    }
+    function saveState() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+    }
+    function toggleItem(id) {
+      state[id] = !state[id];
+      saveState();
+      render();
+    }
+
+    function render() {
+      const mRoot = document.getElementById("modulesRoot");
+      let total = 0, done = 0;
+
+      mRoot.innerHTML = MODULES.map(m => {
+        const mDone = m.tasks.filter(t => state[t.id]).length;
+        total += m.tasks.length;
+        done += mDone;
+
+        const linksHtml = m.links.map(l =>
+          `<a class="link-chip ${escapeHtml(l.cls)}" href="${escapeHtml(l.href)}">${escapeHtml(l.label)}</a>`
+        ).join("");
+
+        const tasksHtml = m.tasks.map(t => {
+          const ck = !!state[t.id];
+          return `<li><label class="check-item ${ck ? 'done' : ''}">
+            <input type="checkbox" ${ck ? 'checked' : ''} onchange="toggleItem('${escapeHtml(t.id)}')" />
+            <span>${escapeHtml(t.text)}</span>
+          </label></li>`;
+        }).join("");
+
+        return `<section class="module-card ${m.active ? 'active' : ''}">
+          <div class="mod-head">
+            <div>
+              <span class="mod-tag ${m.active ? 'active' : ''}">${escapeHtml(m.tag)} • ${mDone}/${m.tasks.length}</span>
+              <h2 class="mod-title">${escapeHtml(m.title)}</h2>
+              <p class="mod-desc">${escapeHtml(m.desc)}</p>
+            </div>
+            <div class="mod-links">${linksHtml || '<span style="font-size:0.78rem; color:var(--text-dim);">Unlocks sequentially</span>'}</div>
+          </div>
+          <ul class="checklist">${tasksHtml}</ul>
+        </section>`;
+      }).join("");
+
+      const gRoot = document.getElementById("gateRoot");
+      gRoot.innerHTML = `<ul class="checklist">${GATES.map(g => {
+        total++;
+        const ck = !!state[g.id];
+        if (ck) done++;
+        return `<li><label class="check-item ${ck ? 'done' : ''}">
+          <input type="checkbox" ${ck ? 'checked' : ''} onchange="toggleItem('${escapeHtml(g.id)}')" />
+          <span>${escapeHtml(g.text)}</span>
+        </label></li>`;
+      }).join("")}</ul>`;
+
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      document.getElementById("stagePct").textContent = pct + "%";
+      document.getElementById("stageFill").style.width = pct + "%";
+      document.getElementById("stageCount").textContent = `${done} of ${total} checklist tasks completed`;
+      document.getElementById("miniLabel").textContent = `${done} / ${total} Tasks`;
+      document.getElementById("miniFill").style.width = pct + "%";
+      document.getElementById("miniPct").textContent = pct + "%";
+    }
+
+    function exportProgress() {
+      const payload = { version: "aiml_stage0_v1", exportedAt: new Date().toISOString(), state };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "aiml_stage0_progress.json";
+      a.click();
+    }
+
+    function importProgress(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const parsed = JSON.parse(ev.target.result);
+          if (parsed && typeof parsed.state === "object") {
+            state = parsed.state;
+            saveState();
+            render();
+            alert("Stage 0 progress imported!");
+          } else {
+            alert("Invalid JSON backup.");
+          }
+        } catch {
+          alert("Failed to parse JSON.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    }
+
+    function resetProgress() {
+      if (!confirm("Reset all Stage 0 checkboxes?")) return;
+      state = {};
+      saveState();
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>

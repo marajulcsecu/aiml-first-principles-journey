@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 0.1 (Deep Dive): Python Complete Foundation &amp; Internals for AI/ML Engineers</title>
+  <style>
+    :root {
+      --bg: #09090b;
+      --bg-elevated: #111114;
+      --bg-card: #141418;
+      --bg-subtle: #1c1c22;
+      --bg-code: #0d0d11;
+      --border: #26262e;
+      --border-strong: #383844;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #818cf8;
+      --accent-hover: #6366f1;
+      --accent-ink: #0f0e24;
+      --accent-soft: rgba(129, 140, 248, 0.13);
+      --accent-border: rgba(129, 140, 248, 0.38);
+      --link: #38bdf8;
+      --sky-soft: rgba(56, 189, 248, 0.12);
+      --emerald: #34d399;
+      --emerald-soft: rgba(52, 211, 153, 0.12);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --rose: #f43f5e;
+      --rose-soft: rgba(244, 63, 94, 0.14);
+      --radius: 10px;
+    }
+
+    [data-theme="light"] {
+      --bg: #fafafa;
+      --bg-elevated: #ffffff;
+      --bg-card: #ffffff;
+      --bg-subtle: #f4f4f5;
+      --bg-code: #111114;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --text: #18181b;
+      --text-muted: #52525b;
+      --text-dim: #71717a;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-ink: #ffffff;
+      --accent-soft: rgba(79, 70, 229, 0.1);
+      --accent-border: rgba(79, 70, 229, 0.35);
+      --link: #0284c7;
+      --sky-soft: rgba(2, 132, 199, 0.1);
+      --emerald: #059669;
+      --emerald-soft: rgba(5, 150, 105, 0.1);
+      --amber: #d97706;
+      --amber-soft: rgba(217, 119, 6, 0.1);
+      --rose: #e11d48;
+      --rose-soft: rgba(225, 29, 72, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding-bottom: 72px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.85em;
+      background: var(--bg-subtle);
+      color: var(--link);
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+
+    pre {
+      background: #0d0d11;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.83rem;
+      line-height: 1.58;
+      color: #e4e4e7;
+      margin: 12px 0;
+    }
+
+    pre .kw { color: #c084fc; }
+    pre .ty { color: #38bdf8; }
+    pre .fn { color: #34d399; }
+    pre .cm { color: #9ca3af; }
+    pre .nu { color: #fbbf24; }
+    pre .st { color: #a5f3fc; }
+    pre .bad { color: #fb7185; font-weight: 700; }
+
+    /* Slim 52px Sticky Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 52px;
+      background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+
+    .topbar-inner {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .breadcrumb a { color: var(--text-muted); }
+    .breadcrumb a:hover { color: var(--text); text-decoration: none; }
+    .breadcrumb .sep { color: var(--text-dim); }
+
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    .top-btn {
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .top-btn:hover { border-color: var(--border-strong); text-decoration: none; }
+
+    .lang-btn {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent-border);
+      font-weight: 700;
+    }
+
+    /* Normal-Flow Scrolling Hero */
+    .hero {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 24px 26px;
+    }
+
+    .container { max-width: 1140px; margin: 0 auto; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+
+    .pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+    }
+
+    .pill-accent { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .subtitle { color: var(--text-muted); font-size: 0.95rem; max-width: 850px; }
+
+    .layout {
+      max-width: 1140px;
+      margin: 28px auto 0;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 235px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static !important; }
+    }
+
+    .toc {
+      position: sticky;
+      top: 68px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 15px;
+    }
+
+    .toc h2 {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+
+    .toc ul { list-style: none; }
+    .toc li { margin-bottom: 5px; }
+    .toc a {
+      display: block;
+      font-size: 0.81rem;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .toc a:hover { background: var(--bg-subtle); color: var(--text); text-decoration: none; }
+
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 26px;
+      margin-bottom: 22px;
+    }
+
+    .sec-eyebrow {
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .section-card h2 {
+      font-size: 1.32rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+      letter-spacing: -0.015em;
+    }
+
+    .section-card h3 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 18px 0 8px;
+    }
+
+    .section-card p { font-size: 0.93rem; color: var(--text-muted); margin-bottom: 12px; }
+    .section-card ul, .section-card ol { padding-left: 20px; margin-bottom: 12px; }
+    .section-card li { font-size: 0.91rem; color: var(--text-muted); margin-bottom: 6px; }
+    .section-card strong { color: var(--text); }
+
+    .callout {
+      border-radius: 8px;
+      padding: 13px 16px;
+      margin: 14px 0;
+      font-size: 0.88rem;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+    }
+
+    .callout-accent { border-left: 3px solid var(--accent); background: var(--accent-soft); }
+    .callout-warn { border-left: 3px solid var(--amber); background: var(--amber-soft); }
+    .callout-danger { border-left: 3px solid var(--rose); background: var(--rose-soft); }
+    .callout-ok { border-left: 3px solid var(--emerald); background: var(--emerald-soft); }
+
+    .diagram-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 16px;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .diagram-caption {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: var(--bg-subtle); color: var(--text); font-weight: 700; }
+    td { color: var(--text-muted); }
+
+    /* Interactive Simulator */
+    .sim-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--accent-border);
+      border-radius: 9px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .sim-field { display: flex; flex-direction: column; gap: 4px; }
+    .sim-field label { font-size: 0.74rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; }
+
+    .sim-field select, .sim-field input {
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      font-family: inherit;
+    }
+
+    .sim-btn {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sim-btn:hover { background: var(--accent-hover); color: #ffffff; }
+
+    .sim-output {
+      background: #0d0d11;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 13px 15px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.81rem;
+      color: #e4e4e7;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    .sim-alert {
+      margin-top: 10px;
+      padding: 10px 13px;
+      border-radius: 7px;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .alert-bad { background: var(--rose-soft); color: var(--rose); border: 1px solid rgba(244, 63, 94, 0.35); }
+    .alert-ok { background: var(--emerald-soft); color: var(--emerald); border: 1px solid rgba(52, 211, 153, 0.35); }
+
+    /* Quiz */
+    .quiz-item {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 15px 17px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-q { font-size: 0.91rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 7px; }
+
+    .quiz-btn {
+      text-align: left;
+      background: var(--bg-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .quiz-btn:hover { border-color: var(--border-strong); }
+    .quiz-btn.correct { background: var(--emerald-soft); border-color: var(--emerald); color: var(--emerald); font-weight: 700; }
+    .quiz-btn.wrong { background: var(--rose-soft); border-color: var(--rose); color: var(--rose); }
+
+    .quiz-feedback { display: none; margin-top: 9px; font-size: 0.83rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar" aria-label="Lecture Navigation">
+    <div class="topbar-inner">
+      <div class="breadcrumb">
+        <a href="../../index.html">AI/ML Mastery</a>
+        <span class="sep">/</span>
+        <a href="../stage_0_detailed_plan.html">Stage 0</a>
+        <span class="sep">/</span>
+        <span>Module 0.1</span>
+      </div>
+      <div class="top-actions">
+        <a class="top-btn lang-btn" href="./module0_1_python_for_ml_engineers_bn.html">বাংলা সংস্করণ →</a>
+        <button class="top-btn" id="themeBtn" onclick="toggleTheme()">Light</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="badge-row">
+        <span class="pill pill-accent">Tier I • Stage 0 • Module 0.1</span>
+        <span class="pill">Step 1: Visual HTML Lecture</span>
+        <span class="pill">C/C++ → Python Fast &amp; Deep Revision</span>
+      </div>
+      <h1>Python Complete Foundation &amp; Internals for AI/ML Engineers</h1>
+      <p class="subtitle">
+        Zero-skip revision of core Python built specifically for engineers who already know C/C++/Java: master CPython's heap object model, reference aliasing traps, data structure complexities, generators, closures, and the exact dunder methods that power PyTorch and Autograd.
+      </p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="toc" aria-label="Table of Contents">
+      <h2>On This Page</h2>
+      <ul>
+        <li><a href="#sec-1">1. Why Python + CPython Internals</a></li>
+        <li><a href="#sec-2">2. Core Syntax (C/C++ → Python)</a></li>
+        <li><a href="#sec-3">3. Object Model &amp; Aliasing Sim</a></li>
+        <li><a href="#sec-4">4. Data Structures &amp; Slicing</a></li>
+        <li><a href="#sec-5">5. Functions, Defaults &amp; Closures</a></li>
+        <li><a href="#sec-6">6. Generators &amp; Context Managers</a></li>
+        <li><a href="#sec-7">7. OOP &amp; PyTorch Dunder Engine</a></li>
+        <li><a href="#sec-8">8. Interactive 6-Q Self-Check</a></li>
+        <li><a href="#sec-lab">9. Launch Lab 0A (Pure Python)</a></li>
+      </ul>
+    </aside>
+
+    <main>
+      <!-- SECTION 1 -->
+      <section class="section-card" id="sec-1">
+        <div class="sec-eyebrow">Section 0.1.1 • Architecture First</div>
+        <h2>1. Why Python Dominates AI/ML — And How C/C++ Powers It Underneath</h2>
+        <p>
+          Coming from <code>C</code>, <code>C++</code>, and <code>Java</code>, your very first healthy engineering question should be: <em>"Wait—if Python is an interpreted, dynamically typed language that is 30×–100× slower than C++ in raw loops, why does almost all frontier AI/ML research run on Python?"</em>
+        </p>
+        <p>
+          The answer is the <strong>Two-Language Architecture</strong>: in AI/ML, Python is <strong>not</strong> doing the heavy arithmetic. Python acts as a clean, expressive <strong>orchestration &amp; control plane</strong> that dispatches dense matrix computations into compiled <code>C</code>, <code>C++</code>, <code>CUDA</code>, and <code>Triton</code> kernels underneath (<code>NumPy</code>, <code>PyTorch</code>, <code>JAX</code>).
+        </p>
+        <div class="callout callout-accent">
+          <strong>Why Your C/C++ Background is an Unfair Advantage:</strong> When you inspect a Python integer <code>x = 42</code>, CPython does <em>not</em> store 4 raw bytes on the stack like C's <code>int32_t</code>. Every single Python value—even a tiny integer—is a heap-allocated C struct (<code>PyObject</code>) carrying a reference count, a type pointer, and payload metadata (~28 bytes minimum!).
+        </div>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 760 225" width="100%" role="img" aria-label="C stack integer vs CPython heap PyObject memory layout">
+            <rect x="10" y="12" width="290" height="200" rx="8" fill="#141418" stroke="#383844"/>
+            <text x="26" y="36" fill="#34d399" font-size="13" font-weight="700" font-family="monospace">C / C++: int32_t x = 42;</text>
+            <text x="26" y="56" fill="#a1a1aa" font-size="11" font-family="sans-serif">Raw 4 bytes directly in Stack Frame (zero pointer chase)</text>
+            <rect x="28" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <rect x="88" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <rect x="148" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <rect x="208" y="78" width="60" height="44" fill="#1c1c22" stroke="#34d399"/>
+            <text x="58" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x2A</text>
+            <text x="118" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x00</text>
+            <text x="178" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x00</text>
+            <text x="238" y="104" text-anchor="middle" fill="#f4f4f5" font-size="12" font-family="monospace">0x00</text>
+            <text x="26" y="148" fill="#a1a1aa" font-size="11" font-family="monospace">Size: 4 bytes | Arithmetic: 1 CPU cycle</text>
+            <text x="26" y="168" fill="#34d399" font-size="11" font-family="sans-serif">An array of 1M ints = 4 MB contiguous RAM</text>
+            <text x="26" y="188" fill="#71717a" font-size="11" font-family="sans-serif">(Exact layout used inside NumPy &amp; PyTorch buffers!)</text>
+
+            <rect x="330" y="12" width="420" height="200" rx="8" fill="#141418" stroke="#818cf8"/>
+            <text x="346" y="36" fill="#818cf8" font-size="13" font-weight="700" font-family="monospace">CPython: x = 42  (Name → Heap PyLongObject)</text>
+            <rect x="346" y="64" width="108" height="48" rx="6" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="400" y="84" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="700" font-family="monospace">Name: "x"</text>
+            <text x="400" y="101" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="monospace">PyObject* ptr</text>
+            <line x1="454" y1="88" x2="496" y2="88" stroke="#818cf8" stroke-width="2"/>
+            <polygon points="496,83 506,88 496,93" fill="#818cf8"/>
+            <rect x="508" y="54" width="224" height="106" rx="6" fill="#1c1c22" stroke="#818cf8"/>
+            <text x="520" y="75" fill="#fbbf24" font-size="11" font-family="monospace">ob_refcnt : 8 bytes (GC count)</text>
+            <text x="520" y="96" fill="#38bdf8" font-size="11" font-family="monospace">ob_type   : 8 bytes (&amp;PyLong_Type)</text>
+            <text x="520" y="117" fill="#c084fc" font-size="11" font-family="monospace">lv_tag    : 8 bytes (sign/size)</text>
+            <text x="520" y="138" fill="#34d399" font-size="11" font-family="monospace">ob_digit  : 4 bytes (value = 42)</text>
+            <text x="346" y="182" fill="#f59e0b" font-size="11" font-family="monospace">Size: ~28 bytes + pointer indirection + dynamic dispatch</text>
+            <text x="346" y="199" fill="#a1a1aa" font-size="11" font-family="sans-serif">Python list of 1M ints = pointers scattered on heap (~36 MB!)</text>
+          </svg>
+          <div class="diagram-caption">Figure 1: Why raw Python numeric loops are slow—and why Module 0.2 (NumPy contiguous C buffers) gives 100× speedups.</div>
+        </div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section class="section-card" id="sec-2">
+        <div class="sec-eyebrow">Section 0.1.2 • Complete Zero-Skip Revision</div>
+        <h2>2. Core Python Syntax &amp; Semantic Traps (C/C++ → Python Lens)</h2>
+        <p>
+          You already understand loops, conditionals, functions, and types from C/C++/Java. Instead of wasting pages explaining what an <code>if</code> statement is, let's lock in the <strong>exact syntactic idioms and subtle semantic traps</strong> where C/C++ muscle memory can silently bite you in Python.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>C / C++ Behavior</th>
+              <th>Python 3 Behavior (Watch Closely!)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Division <code>/</code> vs <code>//</code></strong></td>
+              <td><code>5 / 2 == 2</code> (integer truncation toward zero: <code>-5 / 2 == -2</code>)</td>
+              <td><code>5 / 2 == 2.5</code> (always <code>float</code>!). Floor division <code>//</code> floors toward <strong>−∞</strong>: <code>-5 // 2 == -3</code>!</td>
+            </tr>
+            <tr>
+              <td><strong>Modulo <code>%</code> on Negatives</strong></td>
+              <td><code>-5 % 2 == -1</code> (keeps dividend sign)</td>
+              <td><code>-5 % 2 == 1</code> (keeps divisor sign, always satisfies <code>a == (a // b)*b + (a % b)</code>).</td>
+            </tr>
+            <tr>
+              <td><strong>Arbitrary-Precision <code>int</code></strong></td>
+              <td><code>int64_t</code> overflows silently (UB in signed C!)</td>
+              <td>Python <code>int</code> has <strong>unlimited precision</strong> (no integer overflow, though <code>NumPy</code> fixed-width ints DO overflow!).</td>
+            </tr>
+            <tr>
+              <td><strong>Identity <code>is</code> vs Equality <code>==</code></strong></td>
+              <td><code>a == b</code> compares values (or pointer addresses for pointers)</td>
+              <td><code>==</code> compares <em>value</em> (calls <code>__eq__</code>). <code>is</code> compares <em>memory address</em> (<code>id(a) == id(b)</code>). Always use <code>x is None</code>, NEVER <code>x == None</code> (and never <code>is</code> for numbers/strings!).</td>
+            </tr>
+            <tr>
+              <td><strong>Truthiness</strong></td>
+              <td><code>0</code> / <code>NULL</code> is false; non-zero is true</td>
+              <td><code>False, None, 0, 0.0, "", [], (), {}, set()</code> are falsy; all non-empty containers are truthy. <em>Warning:</em> never write <code>if x:</code> when <code>0.0</code> is a valid learning rate or feature value—write <code>if x is not None:</code>!</td>
+            </tr>
+            <tr>
+              <td><strong>Blocks &amp; Scope</strong></td>
+              <td><code>{ ... }</code> creates block scope (<code>for</code> loop variable dies after loop)</td>
+              <td>4-space indentation. <strong>No block scope inside <code>if</code>/<code>for</code>/<code>with</code></strong>—only Function, Class, and Module scopes (LEGB rule)! Loop variables leak out after the loop ends.</td>
+            </tr>
+            <tr>
+              <td><strong>Unpacking &amp; Iteration</strong></td>
+              <td>Manual index loops <code>for (int i=0; i&lt;n; ++i)</code></td>
+              <td>Prefer <code>for i, val in enumerate(xs):</code> and <code>for x, y in zip(X, Y, strict=True):</code>. Star unpacking: <code>first, *middle, last = seq</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+<pre><span class="cm"># Crisp Pythonic idioms every ML engineer writes daily</span>
+features = [<span class="nu">0.2</span>, <span class="nu">0.8</span>, <span class="nu">-0.5</span>]
+labels   = [<span class="nu">0</span>,   <span class="nu">1</span>,   <span class="nu">0</span>]
+
+<span class="kw">for</span> idx, (x, y) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">zip</span>(features, labels, strict=<span class="kw">True</span>)):
+    <span class="fn">print</span>(<span class="st">f"sample=</span>{idx:<span class="nu">02d</span>}<span class="st"> | x=</span>{x:<span class="nu">+.2f</span>}<span class="st"> | y=</span>{y}<span class="st">"</span>)  <span class="cm"># f-string formatting</span>
+
+<span class="cm"># Chained mathematical comparisons (impossible in C!)</span>
+prob = <span class="nu">0.73</span>
+<span class="kw">assert</span> <span class="nu">0.0</span> &lt;= prob &lt;= <span class="nu">1.0</span>   <span class="cm"># Clean, exact, zero bugs</span></pre>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section class="section-card" id="sec-3">
+        <div class="sec-eyebrow">Section 0.1.3 • The #1 Source of Silent ML Bugs</div>
+        <h2>3. Python's Object &amp; Reference Model (Aliasing vs. Shallow vs. Deep Copy)</h2>
+        <p>
+          In C++, writing <code>std::vector&lt;int&gt; b = a;</code> <strong>copies</strong> the vector. In Python, writing <code>b = a</code> <strong>NEVER copies data</strong>! Variables in Python are merely <strong>name tags (pointers)</strong> bound to heap objects.
+        </p>
+        <ul>
+          <li><strong>Immutable types:</strong> <code>int</code>, <code>float</code>, <code>bool</code>, <code>str</code>, <code>tuple</code>, <code>frozenset</code>. Rebinding <code>x += 1</code> points <code>x</code> to a brand-new object—it cannot corrupt another alias.</li>
+          <li><strong>Mutable types:</strong> <code>list</code>, <code>dict</code>, <code>set</code>, custom objects, NumPy arrays. Mutating in-place (<code>.append()</code>, <code>a[0] = 9</code>, <code>+=</code> on a list) silently changes <strong>every variable pointing to that object</strong>!</li>
+          <li><strong>Pass-by-Object-Reference:</strong> Passing a dataset list into a function hands over the <em>same object pointer</em>. If the function normalizes rows in-place, your caller's original dataset is silently overwritten!</li>
+        </ul>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 760 215" width="100%" role="img" aria-label="Aliasing vs Shallow Copy vs Deep Copy on nested feature matrix">
+            <!-- Aliasing -->
+            <rect x="8" y="10" width="234" height="195" rx="8" fill="#141418" stroke="#f43f5e"/>
+            <text x="20" y="32" fill="#fb7185" font-size="12" font-weight="700" font-family="monospace">1. Alias: b = a</text>
+            <rect x="22" y="48" width="44" height="24" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="44" y="64" text-anchor="middle" fill="#f4f4f5" font-size="11" font-family="monospace">a</text>
+            <rect x="22" y="84" width="44" height="24" rx="4" fill="#1c1c22" stroke="#fb7185"/>
+            <text x="44" y="100" text-anchor="middle" fill="#f4f4f5" font-size="11" font-family="monospace">b</text>
+            <line x1="66" y1="60" x2="108" y2="75" stroke="#38bdf8" stroke-width="1.8"/>
+            <line x1="66" y1="96" x2="108" y2="85" stroke="#fb7185" stroke-width="1.8"/>
+            <rect x="110" y="54" width="118" height="52" rx="5" fill="#1c1c22" stroke="#f43f5e"/>
+            <text x="169" y="75" text-anchor="middle" fill="#f4f4f5" font-size="11" font-family="monospace">Outer List</text>
+            <text x="169" y="94" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="monospace">[row0, row1]</text>
+            <text x="20" y="140" fill="#fb7185" font-size="11" font-family="sans-serif">id(a) == id(b)</text>
+            <text x="20" y="160" fill="#a1a1aa" font-size="11" font-family="sans-serif">Any change to b directly</text>
+            <text x="20" y="176" fill="#a1a1aa" font-size="11" font-family="sans-serif">mutates a (same memory!).</text>
+
+            <!-- Shallow Copy -->
+            <rect x="258" y="10" width="244" height="195" rx="8" fill="#141418" stroke="#f59e0b"/>
+            <text x="270" y="32" fill="#fbbf24" font-size="12" font-weight="700" font-family="monospace">2. Shallow: b = a.copy()</text>
+            <rect x="272" y="48" width="90" height="28" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="317" y="66" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">a: Outer #1</text>
+            <rect x="272" y="92" width="90" height="28" rx="4" fill="#1c1c22" stroke="#fbbf24"/>
+            <text x="317" y="110" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">b: Outer #2</text>
+            <line x1="362" y1="62" x2="404" y2="82" stroke="#38bdf8" stroke-width="1.8"/>
+            <line x1="362" y1="106" x2="404" y2="90" stroke="#fbbf24" stroke-width="1.8"/>
+            <rect x="406" y="64" width="84" height="44" rx="5" fill="#1c1c22" stroke="#f43f5e"/>
+            <text x="448" y="83" text-anchor="middle" fill="#fb7185" font-size="10" font-weight="700" font-family="monospace">SHARED!</text>
+            <text x="448" y="99" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">[1.0, 2.0]</text>
+            <text x="270" y="144" fill="#fbbf24" font-size="11" font-family="sans-serif">id(a) != id(b), BUT</text>
+            <text x="270" y="162" fill="#fb7185" font-size="11" font-family="monospace">id(a[0]) == id(b[0]) !!</text>
+            <text x="270" y="182" fill="#a1a1aa" font-size="11" font-family="sans-serif">b[0][0] = 99 corrupts a[0]!</text>
+
+            <!-- Deep Copy -->
+            <rect x="518" y="10" width="234" height="195" rx="8" fill="#141418" stroke="#34d399"/>
+            <text x="530" y="32" fill="#34d399" font-size="12" font-weight="700" font-family="monospace">3. Deep: deepcopy(a)</text>
+            <rect x="532" y="48" width="84" height="28" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="574" y="66" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">a: Outer #1</text>
+            <line x1="616" y1="62" x2="646" y2="62" stroke="#38bdf8" stroke-width="1.8"/>
+            <rect x="648" y="48" width="90" height="28" rx="4" fill="#1c1c22" stroke="#38bdf8"/>
+            <text x="693" y="66" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">[1.0, 2.0]</text>
+            <rect x="532" y="94" width="84" height="28" rx="4" fill="#1c1c22" stroke="#34d399"/>
+            <text x="574" y="112" text-anchor="middle" fill="#f4f4f5" font-size="10" font-family="monospace">b: Outer #2</text>
+            <line x1="616" y1="108" x2="646" y2="108" stroke="#34d399" stroke-width="1.8"/>
+            <rect x="648" y="94" width="90" height="28" rx="4" fill="#1c1c22" stroke="#34d399"/>
+            <text x="693" y="112" text-anchor="middle" fill="#34d399" font-size="10" font-family="monospace">[1.0, 2.0]</text>
+            <text x="530" y="152" fill="#34d399" font-size="11" font-family="sans-serif">Completely isolated RAM!</text>
+            <text x="530" y="172" fill="#a1a1aa" font-size="11" font-family="sans-serif">Mutating b[0][0] leaves</text>
+            <text x="530" y="188" fill="#a1a1aa" font-size="11" font-family="sans-serif">original dataset untouched.</text>
+          </svg>
+          <div class="diagram-caption">Figure 2: Shallow copying a 2D dataset with <code>list(data)</code> or <code>data[:]</code> is one of the top silent data-corruption traps in Python ML pipelines.</div>
+        </div>
+
+        <h3>Interactive Simulator: Witness Reference Aliasing &amp; the <code>[[0]*3]*3</code> Trap</h3>
+        <div class="sim-box">
+          <div class="sim-controls">
+            <div class="sim-field">
+              <label for="simMode">Scenario</label>
+              <select id="simMode" onchange="runObjSim()">
+                <option value="alias">1. Aliasing: b = a</option>
+                <option value="shallow">2. Shallow Copy: b = a.copy() (or a[:])</option>
+                <option value="deep">3. Deep Copy: b = copy.deepcopy(a)</option>
+                <option value="mult_trap">4. Matrix Trap: W = [[0, 0, 0]] * 3</option>
+              </select>
+            </div>
+            <div class="sim-field">
+              <label for="simRow">Row</label>
+              <select id="simRow" onchange="runObjSim()">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+            <div class="sim-field">
+              <label for="simCol">Col</label>
+              <select id="simCol" onchange="runObjSim()">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+            <div class="sim-field">
+              <label for="simVal">New Value</label>
+              <input type="number" id="simVal" value="99" style="width:82px;" oninput="runObjSim()" />
+            </div>
+            <button class="sim-btn" onclick="runObjSim()">Simulate Mutation</button>
+          </div>
+          <div class="sim-output" id="simOutput"></div>
+          <div class="sim-alert" id="simAlert"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 4 -->
+      <section class="section-card" id="sec-4">
+        <div class="sec-eyebrow">Section 0.1.4 • Algorithms &amp; Complexity</div>
+        <h2>4. Core Data Structures, Slicing &amp; Comprehensions</h2>
+        <p>
+          Because you already know DSA, map Python's built-in containers directly to their C implementations and Big-O costs:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Under the Hood</th>
+              <th>Key Time Complexities</th>
+              <th>Primary ML Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>list</code></td>
+              <td>Dynamic array of <code>PyObject*</code> pointers</td>
+              <td>Index <code>O(1)</code>, <code>append/pop()</code> amortized <code>O(1)</code>, <code>pop(0)</code> / <code>x in list</code> <strong><code>O(n)</code></strong></td>
+              <td>Ordered batches, metric histories, dynamic sequences</td>
+            </tr>
+            <tr>
+              <td><code>tuple</code></td>
+              <td>Fixed immutable pointer array</td>
+              <td>Index <code>O(1)</code>, hashable (if elements hashable)</td>
+              <td>Tensor shapes <code>(batch, seq, dim)</code>, dict keys, returning multiple outputs</td>
+            </tr>
+            <tr>
+              <td><code>dict</code></td>
+              <td>Compact open-addressed Hash Table (insertion-ordered since Py 3.7)</td>
+              <td>Lookup/Insert/Delete average <strong><code>O(1)</code></strong></td>
+              <td>Tokenizer vocab <code>token -&gt; id</code>, hyperparameter configs, state dicts</td>
+            </tr>
+            <tr>
+              <td><code>set</code></td>
+              <td>Hash Table (keys only)</td>
+              <td>Membership <code>x in s</code> average <strong><code>O(1)</code></strong>, union/intersection</td>
+              <td>Deduplicating IDs, checking train/test overlap leakage fast!</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <strong>Silent Performance Killer:</strong> Checking <code>if sample_id in train_ids:</code> inside a loop over 100,000 samples takes <strong>O(N²)</strong> if <code>train_ids</code> is a <code>list</code> (hangs for minutes!), versus <strong>O(N)</strong> if <code>train_ids</code> is a <code>set</code> (milliseconds!).
+        </div>
+
+        <h3>Slicing &amp; Comprehensions</h3>
+<pre><span class="cm"># Slicing syntax: seq[start : stop : step]  (stop is EXCLUSIVE; returns a NEW shallow list!)</span>
+nums = [<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">30</span>, <span class="nu">40</span>, <span class="nu">50</span>]
+nums[-<span class="nu">1</span>]       <span class="cm"># 50 (last element)</span>
+nums[<span class="nu">1</span>:<span class="nu">4</span>]      <span class="cm"># [20, 30, 40]</span>
+nums[::<span class="nu">-1</span>]     <span class="cm"># [50, 40, 30, 20, 10] (reversed copy)</span>
+
+<span class="cm"># List, Dict &amp; Set Comprehensions (cleaner and faster than manual append loops)</span>
+squares  = [x * x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">6</span>) <span class="kw">if</span> x % <span class="nu">2</span> == <span class="nu">0</span>]           <span class="cm"># [0, 4, 16]</span>
+vocab    = {tok: i <span class="kw">for</span> i, tok <span class="kw">in</span> <span class="fn">enumerate</span>([<span class="st">"&lt;pad&gt;"</span>, <span class="st">"cat"</span>, <span class="st">"dog"</span>])}
+<span class="cm"># Correct way to create an independent 3x3 zero matrix in pure Python:</span>
+W_safe   = [[<span class="nu">0.0</span> <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">3</span>)] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">3</span>)]         <span class="cm"># 3 distinct row lists!</span></pre>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section class="section-card" id="sec-5">
+        <div class="sec-eyebrow">Section 0.1.5 • Functions &amp; Subtle Traps</div>
+        <h2>5. Functions, <code>*args/**kwargs</code>, Mutable Defaults &amp; Late-Binding Closures</h2>
+        <p>
+          Two classic Python function traps silently wreck ML experiment codebases—even among senior C++/Java developers:
+        </p>
+
+        <h3>Trap A: Mutable Default Arguments (Evaluated ONCE at <code>def</code> Time!)</h3>
+<pre><span class="cm"># BUGGY: the list [] is created ONCE when `def` executes, NOT on each call!</span>
+<span class="kw">def</span> <span class="fn">log_loss</span>(val, history=<span class="bad">[]</span>):
+    history.append(val)
+    <span class="kw">return</span> history
+
+run1 = log_loss(<span class="nu">0.9</span>)   <span class="cm"># [0.9]</span>
+run2 = log_loss(<span class="nu">0.4</span>)   <span class="cm"># [0.9, 0.4] &lt;-- SILENT CONTAMINATION FROM RUN 1!</span>
+
+<span class="cm"># CORRECT PATTERN: Always use None sentinel</span>
+<span class="kw">def</span> <span class="fn">log_loss_safe</span>(val: <span class="ty">float</span>, history: <span class="ty">list</span>[<span class="ty">float</span>] | <span class="kw">None</span> = <span class="kw">None</span>) -&gt; <span class="ty">list</span>[<span class="ty">float</span>]:
+    <span class="kw">if</span> history <span class="kw">is</span> <span class="kw">None</span>:
+        history = []
+    history.append(val)
+    <span class="kw">return</span> history</pre>
+
+        <h3>Trap B: Late-Binding Closures Inside Loops</h3>
+<pre><span class="cm"># BUGGY: every lambda looks up variable `r` when CALLED, after the loop finished (r = 0.001)!</span>
+scalers = [<span class="kw">lambda</span> x: x * <span class="bad">r</span> <span class="kw">for</span> r <span class="kw">in</span> [<span class="nu">0.1</span>, <span class="nu">0.01</span>, <span class="nu">0.001</span>]]
+[f(<span class="nu">100</span>) <span class="kw">for</span> f <span class="kw">in</span> scalers]  <span class="cm"># [0.1, 0.1, 0.1] &lt;-- ALL THREE USED 0.001!</span>
+
+<span class="cm"># CORRECT: Capture current value via default argument (or factory function)</span>
+scalers_ok = [<span class="kw">lambda</span> x, rate=r: x * rate <span class="kw">for</span> r <span class="kw">in</span> [<span class="nu">0.1</span>, <span class="nu">0.01</span>, <span class="nu">0.001</span>]]
+[f(<span class="nu">100</span>) <span class="kw">for</span> f <span class="kw">in</span> scalers_ok]  <span class="cm"># [10.0, 1.0, 0.1] ✓</span></pre>
+
+        <h3><code>*args</code>, <code>**kwargs</code> &amp; Type Annotations</h3>
+        <p>
+          PyTorch and HuggingFace layers pass flexible keyword hyperparameters everywhere via <code>*args</code> (packs extra positional args into a <code>tuple</code>) and <code>**kwargs</code> (packs extra keyword args into a <code>dict</code>). Modern Python 3.12 also supports clean type hints (<code>list[float]</code>, <code>dict[str, int]</code>) that dramatically improve readability without slowing runtime.
+        </p>
+      </section>
+
+      <!-- SECTION 6 -->
+      <section class="section-card" id="sec-6">
+        <div class="sec-eyebrow">Section 0.1.6 • Memory-Safe Data Streaming</div>
+        <h2>6. Iterators, Lazy Generators (<code>yield</code>) &amp; Context Managers (<code>with</code>)</h2>
+        <p>
+          Remember your laptop has <strong>7.4 GiB RAM</strong>. If you try to load 5 million training samples into a Python <code>list</code> all at once, the OS OOM-killer terminates your process instantly. A <strong>Generator</strong> (any function using <code>yield</code>) pauses its stack frame after producing <em>one</em> batch and resumes on demand—keeping RAM usage <strong>O(batch_size)</strong> instead of <strong>O(dataset_size)</strong>!
+        </p>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 760 155" width="100%" role="img" aria-label="Eager List vs Lazy Generator memory usage">
+            <rect x="10" y="12" width="355" height="130" rx="8" fill="#141418" stroke="#f43f5e"/>
+            <text x="24" y="34" fill="#fb7185" font-size="12" font-weight="700" font-family="monospace">Eager List: [load(i) for i in range(1_000_000)]</text>
+            <rect x="24" y="50" width="324" height="32" rx="4" fill="#2c141c" stroke="#f43f5e"/>
+            <text x="186" y="70" text-anchor="middle" fill="#fb7185" font-size="11" font-family="monospace">ALL 1,000,000 samples materialized in RAM → OOM!</text>
+            <text x="24" y="106" fill="#a1a1aa" font-size="11" font-family="sans-serif">Space: O(N) • Startup latency: waits for entire dataset</text>
+            <text x="24" y="125" fill="#71717a" font-size="11" font-family="sans-serif">Fine only for tiny toy datasets.</text>
+
+            <rect x="392" y="12" width="358" height="130" rx="8" fill="#141418" stroke="#34d399"/>
+            <text x="406" y="34" fill="#34d399" font-size="12" font-weight="700" font-family="monospace">Lazy Generator: yield batch  (PyTorch DataLoader pattern)</text>
+            <rect x="406" y="50" width="76" height="32" rx="4" fill="#122b22" stroke="#34d399"/>
+            <text x="444" y="70" text-anchor="middle" fill="#34d399" font-size="10" font-family="monospace">Batch 1</text>
+            <text x="498" y="70" fill="#a1a1aa" font-size="13">→</text>
+            <rect x="518" y="50" width="90" height="32" rx="4" fill="#1c1c22" stroke="#818cf8"/>
+            <text x="563" y="70" text-anchor="middle" fill="#818cf8" font-size="10" font-family="monospace">Train Step</text>
+            <text x="624" y="70" fill="#a1a1aa" font-size="13">→</text>
+            <rect x="644" y="50" width="92" height="32" rx="4" fill="#1c1c22" stroke="#383844"/>
+            <text x="690" y="70" text-anchor="middle" fill="#71717a" font-size="10" font-family="monospace">GC / Next</text>
+            <text x="406" y="106" fill="#34d399" font-size="11" font-family="sans-serif">Space: O(batch_size) • Instant startup</text>
+            <text x="406" y="125" fill="#a1a1aa" font-size="11" font-family="sans-serif">Note: Generators are single-pass (exhausted after 1 epoch).</text>
+          </svg>
+          <div class="diagram-caption">Figure 3: Why real ML pipelines stream data with generators instead of materializing giant lists.</div>
+        </div>
+
+<pre><span class="kw">def</span> <span class="fn">batch_stream</span>(data, batch_size: <span class="ty">int</span>):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">0</span>, <span class="fn">len</span>(data), batch_size):
+        <span class="kw">yield</span> data[i : i + batch_size]   <span class="cm"># pauses here, returns 1 slice at a time</span>
+
+<span class="cm"># Context Managers (`with`): RAII equivalent from C++!</span>
+<span class="cm"># Automatically calls __enter__() on entry and __exit__() even if an exception occurs.</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"metrics.csv"</span>, <span class="st">"w"</span>, encoding=<span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    f.write(<span class="st">"step,loss\n"</span>)
+<span class="cm"># Later in PyTorch: `with torch.no_grad():` disables gradient tracking cleanly via __enter__/__exit__!</span></pre>
+      </section>
+
+      <!-- SECTION 7 -->
+      <section class="section-card" id="sec-7">
+        <div class="sec-eyebrow">Section 0.1.7 • The Secret Engine Behind PyTorch</div>
+        <h2>7. OOP &amp; Dunder Methods — How <code>PyTorch</code> &amp; <code>Autograd</code> Actually Work</h2>
+        <p>
+          In Python, special "double-underscore" (<strong>dunder</strong>) methods let your custom classes hook directly into Python's syntax—just like operator overloading in C++, but deeper. Almost every magical-looking PyTorch line is just a dunder call:
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ML / PyTorch Expression</th>
+              <th>Exact Dunder Method Python Calls</th>
+              <th>Why Researchers Care</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>len(dataset)</code></td>
+              <td><code>dataset.__len__()</code></td>
+              <td>Tells the DataLoader how many total samples exist.</td>
+            </tr>
+            <tr>
+              <td><code>dataset[i]</code> or <code>dataset[-1]</code></td>
+              <td><code>dataset.__getitem__(i)</code></td>
+              <td>Fetches a sample or slice lazily by index.</td>
+            </tr>
+            <tr>
+              <td><code>logits = model(x)</code></td>
+              <td><code>model.__call__(x)</code></td>
+              <td>Lets an object behave like a function (PyTorch runs hooks + <code>forward(x)</code>).</td>
+            </tr>
+            <tr>
+              <td><code>c = a * b + d</code></td>
+              <td><code>a.__mul__(b)</code> then <code>.__add__(d)</code></td>
+              <td><strong>Literally how Autograd builds the computation graph!</strong></td>
+            </tr>
+            <tr>
+              <td><code>c = 2.0 * a</code></td>
+              <td><code>float.__mul__</code> returns <code>NotImplemented</code> → calls <strong><code>a.__rmul__(2.0)</code></strong></td>
+              <td>Without reflected <code>__radd__</code>/<code>__rmul__</code>, <code>2.0 * tensor</code> crashes with <code>TypeError</code>!</td>
+            </tr>
+            <tr>
+              <td><code>print(tensor)</code></td>
+              <td><code>tensor.__repr__()</code></td>
+              <td>Clear debugging display of shape, dtype, value.</td>
+            </tr>
+          </tbody>
+        </table>
+
+<pre><span class="kw">class</span> <span class="ty">Linear1D</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, w: <span class="ty">float</span>, b: <span class="ty">float</span>):
+        <span class="kw">self</span>.w = w
+        <span class="kw">self</span>.b = b
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(<span class="kw">self</span>, x: <span class="ty">float</span>) -&gt; <span class="ty">float</span>:   <span class="cm"># Enables model(x)!</span>
+        <span class="kw">return</span> <span class="kw">self</span>.w * x + <span class="kw">self</span>.b
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="kw">self</span>) -&gt; <span class="ty">str</span>:
+        <span class="kw">return</span> <span class="st">f"Linear1D(w=</span>{<span class="kw">self</span>.w}<span class="st">, b=</span>{<span class="kw">self</span>.b}<span class="st">)"</span>
+
+layer = Linear1D(<span class="nu">2.5</span>, -<span class="nu">1.0</span>)
+y = layer(<span class="nu">4.0</span>)   <span class="cm"># 9.0 — invokes Linear1D.__call__(layer, 4.0)</span></pre>
+      </section>
+
+      <!-- SECTION 8 -->
+      <section class="section-card" id="sec-8">
+        <div class="sec-eyebrow">Section 0.1.8 • Mastery Self-Check</div>
+        <h2>8. Interactive 6-Question Self-Check Quiz (<span id="quizScore">0</span>/6)</h2>
+        <p>Test your mental model before opening Lab 0A. Target 6/6 without guessing. <button class="top-btn" onclick="resetQuiz()" style="margin-left:8px;">Reset Quiz</button></p>
+
+        <div class="quiz-item" data-answer="1" data-explain="Correct! Python's // operator performs floor division toward negative infinity: -7 / 2 = -3.5, floored to -4 (unlike C/C++ truncation toward zero which gives -3).">
+          <div class="quiz-q">Q1. What does <code>-7 // 2</code> evaluate to in Python 3 (and how does it differ from C/C++ integer <code>-7 / 2</code>)?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">A) <code>-3</code> in Python, <code>-4</code> in C++</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">B) <code>-4</code> in Python (floor toward −∞), <code>-3</code> in C++ (truncate toward 0)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">C) <code>-3.5</code> in Python, <code>-3</code> in C++</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="2" data-explain="Correct! data.copy() creates a new outer list, but its inner row references STILL point to the exact same row lists as raw_data. Mutating copy[0][0] silently corrupts raw_data[0][0]!">
+          <div class="quiz-q">Q2. Given <code>raw = [[1.0, 2.0], [3.0, 4.0]]</code>, you run <code>train = raw.copy()</code> and then <code>train[0][0] = 99.0</code>. What is <code>raw[0][0]</code> now?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">A) <code>1.0</code> — <code>.copy()</code> isolated all nested lists</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">B) Raises a <code>TypeError</code></button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">C) <code>99.0</code> — <code>.copy()</code> is shallow, so inner row lists are still shared!</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="0" data-explain="Correct! [[0.0]*3]*3 duplicates the SAME inner row reference 3 times, so id(W[0]) == id(W[1]) == id(W[2]). Modifying W[0][1] mutates every row!">
+          <div class="quiz-q">Q3. Why is <code>W = [[0.0] * 3] * 3</code> a catastrophic bug for initializing a 3×3 weight matrix?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">A) All 3 rows are aliases to the exact same inner list object in memory</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">B) Floats cannot be multiplied inside lists</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">C) It produces a 1D list of 9 zeros instead of 2D</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="1" data-explain="Correct! Default arguments are evaluated ONCE when the def statement executes, so every call without an explicit list shares and mutates the same list object.">
+          <div class="quiz-q">Q4. Why should you NEVER write <code>def record(x, buf=[]):</code> in an ML experiment logger?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">A) Python forbids empty lists as arguments</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">B) The default list is created once at function definition time and shared across all calls</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">C) It makes every call O(n²)</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="2" data-explain="Correct! A generator using yield suspends execution and produces one batch on demand, using O(batch_size) memory instead of materializing all 10M items in RAM.">
+          <div class="quiz-q">Q5. You need to stream 10 million records in mini-batches of 64 on a 7.4 GiB RAM laptop. What is the key advantage of a <code>yield</code> generator over returning a list of batches?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">A) Generators automatically run on NVIDIA GPUs</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">B) Generators can be indexed randomly like <code>gen[500]</code></button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">C) Lazy evaluation keeps memory O(batch_size) instead of O(N) total dataset size</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-item" data-answer="0" data-explain="Correct! When evaluating 3.0 * a, float.__mul__ does not know MiniScalar and returns NotImplemented, so Python automatically falls back to a.__rmul__(3.0).">
+          <div class="quiz-q">Q6. Your custom class <code>MiniScalar</code> implements <code>__mul__</code>, so <code>a * 3.0</code> works—but <code>3.0 * a</code> raises <code>TypeError</code>. Which dunder method fixes this?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">A) <code>__rmul__</code> (reflected multiplication)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">B) <code>__call__</code></button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">C) <code>__getitem__</code></button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 9 -->
+      <section class="section-card" id="sec-lab">
+        <div class="sec-eyebrow">Section 0.1.9 • Steps 3 &amp; 4: Pure Python Hands-On Lab</div>
+        <h2>9. Next Step: Launch Lab 0A (Python Internals &amp; Silent ML Bug Forensics)</h2>
+        <p>
+          Now switch from lecture to hands-on pure Python practice in <code>Stage_0_Numerical_Computing_Bedrock/labs/lab0a_python_internals_ml_bugs/</code>. Remember our strict rule: <strong>write your solutions yourself without AI autopilot!</strong>
+        </p>
+        <ul>
+          <li><strong>Part 1 (Inspect Reality):</strong> Run <code>part1_object_inspector.py</code> to observe real CPython <code>id()</code> addresses, refcounts, interning, shallow vs deep copy pointers, and generator RAM usage.</li>
+          <li><strong>Part 2 (Witness 4 Silent ML Bugs):</strong> Run <code>part2_buggy_ml_pipeline.py</code> and trace why all 4 functions execute with <strong>zero crashes</strong> while silently corrupting experiments.</li>
+          <li><strong>Part 3 (Build Cleanly &amp; Verify):</strong> Implement all 6 tasks in <code>part3_solution_template.py</code> (4 bug fixes + <code>MiniDataset</code> &amp; lazy <code>batch_generator</code> + Autograd-preview <code>MiniScalar</code>) and pass <code>python3 verify_lab0a.py</code> 100%!</li>
+        </ul>
+<pre><span class="cm"># Run Lab 0A natively on your Linux host (zero external packages needed!)</span>
+<span class="fn">cd</span> Stage_0_Numerical_Computing_Bedrock/labs/lab0a_python_internals_ml_bugs
+<span class="fn">python3</span> part1_object_inspector.py
+<span class="fn">python3</span> part2_buggy_ml_pipeline.py
+<span class="fn">python3</span> verify_lab0a.py</pre>
+        <p style="font-size:0.85rem; color:var(--text-dim);">
+          Read full mission brief &amp; collapsible hints in <a href="../labs/lab0a_python_internals_ml_bugs/README.md"><code>labs/lab0a_python_internals_ml_bugs/README.md</code></a>.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "marajul_aiml_theme";
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      document.getElementById("themeBtn").textContent = t === "dark" ? "Light" : "Dark";
+    }
+    function toggleTheme() {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      try { localStorage.setItem(THEME_KEY, next); } catch {}
+      applyTheme(next);
+    }
+    applyTheme((() => { try { return localStorage.getItem(THEME_KEY) || "dark"; } catch { return "dark"; } })());
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function runObjSim() {
+      const mode = document.getElementById("simMode").value;
+      const r = parseInt(document.getElementById("simRow").value, 10);
+      const c = parseInt(document.getElementById("simCol").value, 10);
+      const val = Number(document.getElementById("simVal").value || 0);
+
+      let lines = [];
+      let alertCls = "alert-bad";
+      let alertMsg = "";
+
+      if (mode === "mult_trap") {
+        const row = [0, 0, 0];
+        row[c] = val;
+        const W = [row, row, row];
+        lines = [
+          `W = [[0, 0, 0]] * 3`,
+          `Mutation: W[${r}][${c}] = ${val}`,
+          `Row IDs : id(W[0])=0x7f01a0  id(W[1])=0x7f01a0  id(W[2])=0x7f01a0  (ALL IDENTICAL!)`,
+          `Result W: ${JSON.stringify(W)}`
+        ];
+        alertCls = "alert-bad";
+        alertMsg = `SILENT ML BUG! Updating W[${r}][${c}] accidentally overwrote column ${c} in ALL 3 rows because '*' duplicated the same row reference!`;
+      } else {
+        const a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        let b;
+        let idInfo;
+        if (mode === "alias") {
+          b = a;
+          b[r][c] = val;
+          idInfo = `id(a)==id(b) [0x7f1000] | id(a[${r}])==id(b[${r}]) [0x7f10${r}0]`;
+          alertCls = "alert-bad";
+          alertMsg = `SILENT ALIASING BUG! b = a made zero copy. Mutating b[${r}][${c}] = ${val} directly corrupted original dataset a[${r}][${c}] = ${a[r][c]}!`;
+        } else if (mode === "shallow") {
+          b = a.slice();
+          b[r][c] = val;
+          idInfo = `id(a)=0x7f1000 != id(b)=0x7f2000 | BUT id(a[${r}])==id(b[${r}]) [0x7f10${r}0]!!`;
+          alertCls = "alert-bad";
+          alertMsg = `SHALLOW COPY TRAP! Outer lists differ, but inner feature vectors are STILL shared—normalizing b[${r}][${c}] silently corrupted raw dataset a[${r}][${c}]!`;
+        } else {
+          b = a.map(row => row.slice());
+          b[r][c] = val;
+          idInfo = `id(a)=0x7f1000 != id(b)=0x7f2000 | id(a[${r}])=0x7f10${r}0 != id(b[${r}])=0x7f20${r}0 (ISOLATED)`;
+          alertCls = "alert-ok";
+          alertMsg = `SAFE! copy.deepcopy(a) cloned both outer container and every inner row—original dataset a remains completely untouched.`;
+        }
+        lines = [
+          `Mutation : b[${r}][${c}] = ${val}`,
+          `Pointers : ${idInfo}`,
+          `Original a: ${JSON.stringify(a)}`,
+          `Modified b: ${JSON.stringify(b)}`
+        ];
+      }
+
+      document.getElementById("simOutput").innerHTML = lines.map(l => `<div>${escapeHtml(l)}</div>`).join("");
+      const al = document.getElementById("simAlert");
+      al.className = "sim-alert " + alertCls;
+      al.textContent = alertMsg;
+    }
+
+    let quizAnswered = {};
+    function answerQuiz(btn, chosenIdx) {
+      const card = btn.closest(".quiz-item");
+      const items = Array.from(document.querySelectorAll(".quiz-item"));
+      const qIdx = items.indexOf(card);
+      const correctIdx = parseInt(card.dataset.answer, 10);
+      const btns = card.querySelectorAll(".quiz-btn");
+      const fb = card.querySelector(".quiz-feedback");
+
+      btns.forEach(b => b.classList.remove("correct", "wrong"));
+      if (chosenIdx === correctIdx) {
+        btn.classList.add("correct");
+        fb.style.color = "var(--emerald)";
+        fb.textContent = "✓ " + card.dataset.explain;
+        quizAnswered[qIdx] = true;
+      } else {
+        btn.classList.add("wrong");
+        fb.style.color = "var(--rose)";
+        fb.textContent = "✗ Not quite — re-check the CPython memory/evaluation rule above and try again.";
+        quizAnswered[qIdx] = false;
+      }
+      fb.style.display = "block";
+      document.getElementById("quizScore").textContent = Object.values(quizAnswered).filter(Boolean).length;
+    }
+
+    function resetQuiz() {
+      quizAnswered = {};
+      document.getElementById("quizScore").textContent = "0";
+      document.querySelectorAll(".quiz-item").forEach(card => {
+        card.querySelectorAll(".quiz-btn").forEach(b => b.classList.remove("correct", "wrong"));
+        const fb = card.querySelector(".quiz-feedback");
+        fb.style.display = "none";
+        fb.textContent = "";
+      });
+    }
+
+    runObjSim();
+  </script>
+</body>
+</html>

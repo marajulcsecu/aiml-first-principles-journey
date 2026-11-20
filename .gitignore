@@ -1,0 +1,60 @@
+# Secrets & Environment Variables (NEVER commit these!)
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets.json
+secrets.yaml
+secrets.yml
+credentials.json
+*id_rsa*
+*id_ed25519*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large Datasets, Model Weights & Experiment Artifacts
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.onnx
+*.h5
+*.hdf5
+*.npz
+*.npy
+*.parquet
+*.arrow
+*.tar.gz
+*.zip
+data/raw/
+checkpoints/
+wandb/
+mlruns/
+runs/
+*.log
+
+# OS & Editor Junk
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
